@@ -3,18 +3,30 @@ import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { ReactNode } from "react";
 
 const theme = createTheme({
+  breakpoints: {
+    values: {
+      xs: 0,
+      sm: 600,
+      md: 900,
+      lg: 1350,
+      xl: 1536,
+    },
+  },
+  typography: {
+    fontFamily: "inherit",
+    fontSize: 15,
+    allVariants: {
+      color: "inherit",
+    },
+  },
   palette: {
     primary: {
-      light: "#757ce8",
-      main: "#00bcd4",
-      dark: "#002884",
-      contrastText: "#fff",
+      main: "#eda55c",
+      contrastText: "inherit",
     },
     secondary: {
-      light: "#ff7961",
-      main: "#ffc400",
-      dark: "#ba000d",
-      contrastText: "#000",
+      main: "#0d1421",
+      contrastText: "inherit",
     },
   },
 });

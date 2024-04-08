@@ -13,9 +13,21 @@ import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
-import { Divider, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
+import {
+  Divider,
+  Drawer,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+} from "@mui/material";
+import Link from "next/link";
 
-const pages = ["Staking", "NFT"];
+const pages = [
+  { href: "staking", name: "Staking" },
+  { href: "nft", name: "NFT" },
+];
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
 function Navbar() {
@@ -42,29 +54,16 @@ function Navbar() {
   };
 
   return (
-    <AppBar position="static">
-      <Container maxWidth="xl">
-        <Toolbar disableGutters>
-          <AdbIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1 }} />
-          <Typography
-            variant="h6"
-            noWrap
-            component="a"
-            href="#app-bar-with-responsive-menu"
-            sx={{
-              mr: 2,
-              display: { xs: "none", md: "flex" },
-              fontFamily: "monospace",
-              fontWeight: 700,
-              letterSpacing: ".3rem",
-              color: "inherit",
-              textDecoration: "none",
-            }}
-          >
-            LOGO
-          </Typography>
-
-          <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
+    <AppBar
+      position="fixed"
+      sx={{ backgroundColor: "inherit", padding: "0 20px", boxShadow: "none" }}
+    >
+      <Container maxWidth="lg" className="header-wrap">
+        <Toolbar
+          disableGutters
+          sx={{ flex: 1, justifyContent: "space-between" }}
+        >
+          <Box sx={{ display: { xs: "flex", md: "none" } }}>
             <IconButton
               size="large"
               aria-label="account of current user"
@@ -75,56 +74,38 @@ function Navbar() {
             >
               <MenuIcon />
             </IconButton>
-              {/* {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{page}</Typography>
-                </MenuItem>
-              ))} */}
-              <Drawer open={Boolean(anchorElNav)} onClose={handleCloseNavMenu}>
-                <Box
-                  sx={{ width: 250 }}
-                  role="presentation"
-                >
-                  <List>
-                    {pages.map(
-                      (text, index) => (
-                        <ListItem key={text} disablePadding>
-                          <ListItemButton>
-                            <ListItemIcon>
-                              {index % 2 === 0 ? 1 : 2}
-                            </ListItemIcon>
-                            <ListItemText primary={text} />
-                          </ListItemButton>
-                        </ListItem>
-                      )
-                    )}
-                  </List>
-                  <Divider />
-                  <List>
-                    {["All mail", "Trash", "Spam"].map((text, index) => (
-                      <ListItem key={text} disablePadding>
-                        <ListItemButton>
-                          <ListItemIcon>
-                            {index % 2 === 0 ?  1 : 2}
-                          </ListItemIcon>
-                          <ListItemText primary={text} />
-                        </ListItemButton>
-                      </ListItem>
-                    ))}
-                  </List>
-                </Box>
-              </Drawer>
+            <Drawer open={Boolean(anchorElNav)} onClose={handleCloseNavMenu}>
+              <Box sx={{ width: 250 }} role="presentation">
+                <List>
+                  {pages.map((page, index) => (
+                    <ListItem key={index} disablePadding>
+                      <ListItemButton>
+                        <ListItemIcon>{index % 2 === 0 ? 1 : 2}</ListItemIcon>
+                        <ListItemText primary={page.name} />
+                      </ListItemButton>
+                    </ListItem>
+                  ))}
+                </List>
+                <Divider />
+                <List>
+                  {["All mail", "Trash", "Spam"].map((text, index) => (
+                    <ListItem key={text} disablePadding>
+                      <ListItemButton>
+                        <ListItemIcon>{index % 2 === 0 ? 1 : 2}</ListItemIcon>
+                        <ListItemText primary={text} />
+                      </ListItemButton>
+                    </ListItem>
+                  ))}
+                </List>
+              </Box>
+            </Drawer>
           </Box>
-          <AdbIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }} />
           <Typography
-            variant="h5"
+            variant="h6"
             noWrap
             component="a"
-            href="#app-bar-with-responsive-menu"
             sx={{
               mr: 2,
-              display: { xs: "flex", md: "none" },
-              flexGrow: 1,
               fontFamily: "monospace",
               fontWeight: 700,
               letterSpacing: ".3rem",
@@ -132,17 +113,27 @@ function Navbar() {
               textDecoration: "none",
             }}
           >
-            LOGO
+            <Link href="/">
+              <AdbIcon sx={{ mr: 1 }} />
+              LOGO
+            </Link>
           </Typography>
-          <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-            {pages.map((page) => (
-              <Button
-                key={page}
-                onClick={handleCloseNavMenu}
-                sx={{ my: 2, color: "white", display: "block" }}
+          <Box sx={{ display: { xs: "none", md: "flex" } }}>
+            {pages.map((page, index) => (
+              // <Button
+              //   key={page}
+              //   onClick={handleCloseNavMenu}
+              //   sx={{ my: 2, color: "white", display: "block" }}
+              // >
+              //   {page}
+              // </Button>
+              <Link
+                key={index}
+                href={`/${page.href}`}
+                style={{ margin: "0 10px" }}
               >
-                {page}
-              </Button>
+                {page.name}
+              </Link>
             ))}
           </Box>
 

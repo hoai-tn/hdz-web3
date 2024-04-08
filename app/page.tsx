@@ -12,7 +12,7 @@ const Home = () => {
           color: theme.palette.primary.main,
         })}
       >
-        asd{" "}
+        asd
       </Box>
       <div className="bg-secondary">asdasdasd</div>
     </div>

@@ -25,8 +25,11 @@ import {
 import Link from "next/link";
 
 const pages = [
+  { href: "#about", name: "About" },
+  { href: "#tokenomics", name: "Tokenomics" },
   { href: "staking", name: "Staking" },
   { href: "nft", name: "NFT" },
+  { href: "#FAQ", name: "FAQ" },
 ];
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
@@ -103,7 +106,6 @@ function Navbar() {
           <Typography
             variant="h6"
             noWrap
-            component="a"
             sx={{
               mr: 2,
               fontFamily: "monospace",
@@ -120,13 +122,6 @@ function Navbar() {
           </Typography>
           <Box sx={{ display: { xs: "none", md: "flex" } }}>
             {pages.map((page, index) => (
-              // <Button
-              //   key={page}
-              //   onClick={handleCloseNavMenu}
-              //   sx={{ my: 2, color: "white", display: "block" }}
-              // >
-              //   {page}
-              // </Button>
               <Link
                 key={index}
                 href={`/${page.href}`}

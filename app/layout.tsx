@@ -4,6 +4,8 @@ import Navbar from "./components/Navbar";
 import "./globals.css";
 import Providers from "./Providers";
 import Header from "./components/Header";
+import Footer from "./components/Footer";
+import { Web3Modal } from "./context/web3modal";
 
 const inter = Slackey({ weight: "400", subsets: ["latin"] });
 
@@ -18,14 +20,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" style={{scrollBehavior:'smooth'}}>
+    <html lang="en" style={{ scrollBehavior: "smooth" }}>
       <body className={inter.className} suppressHydrationWarning={true}>
         <Providers>
-          <div>
-            <Navbar />
-            <Header />
-            <div className="h-[1000px]">{children}</div>
-          </div>
+          <Web3Modal>
+            <div>
+              <Navbar />
+              <Header />
+              <div>{children}</div>
+            </div>
+            <Footer />
+          </Web3Modal>
         </Providers>
       </body>
     </html>

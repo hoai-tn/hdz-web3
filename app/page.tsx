@@ -13,7 +13,7 @@ const Home = () => {
       <Tokenomics />
       <Container maxWidth="md">
         <Image
-         className="mx-auto"
+         className="mx-auto scale-y-[-1]"
           src="/img/paws.png"
           width={150}
           height={100}

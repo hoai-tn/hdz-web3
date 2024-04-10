@@ -24,8 +24,12 @@ const theme = createTheme({
       main: "#eda55c",
       contrastText: "inherit",
     },
+    // secondary: {
+    //   main: "#0d1421",
+    //   contrastText: "inherit",
+    // },
     secondary: {
-      main: "#0d1421",
+      main: "#000000",
       contrastText: "inherit",
     },
   },

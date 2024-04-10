@@ -23,6 +23,13 @@ import {
   ListItemText,
 } from "@mui/material";
 import Link from "next/link";
+import ConnectWalletBtn from "../ConnectWalletBtn/ConnectWalletBtn";
+import {
+  useDisconnect,
+  useWeb3Modal,
+  useWeb3ModalAccount,
+} from "@web3modal/ethers5/react";
+import { showSortAddress } from "@/app/utils";
 
 const pages = [
   { href: "#about", name: "About" },
@@ -31,29 +38,19 @@ const pages = [
   { href: "nft", name: "NFT" },
   { href: "#FAQ", name: "FAQ" },
 ];
-const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
 function Navbar() {
+  const { isConnected, address } = useWeb3ModalAccount();
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
-    null
-  );
-  const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
     null
   );
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
   };
-  const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElUser(event.currentTarget);
-  };
 
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
-  };
-
-  const handleCloseUserMenu = () => {
-    setAnchorElUser(null);
   };
 
   return (
@@ -131,36 +128,19 @@ function Navbar() {
               </Link>
             ))}
           </Box>
-
-          <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
-              </IconButton>
-            </Tooltip>
-            <Menu
-              sx={{ mt: "45px" }}
-              id="menu-appbar"
-              anchorEl={anchorElUser}
-              anchorOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              open={Boolean(anchorElUser)}
-              onClose={handleCloseUserMenu}
-            >
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
-                </MenuItem>
-              ))}
-            </Menu>
-          </Box>
+          <React.Suspense fallback={<p>Loading feed...</p>}>
+            <Box sx={{ flexGrow: 0 }}>
+              {isConnected ? (
+                <Button variant="outlined" color="secondary">
+                  {showSortAddress(address)}
+                </Button>
+              ) : (
+                <ConnectWalletBtn variant="outlined" color="secondary">
+                  Buy Now
+                </ConnectWalletBtn>
+              )}
+            </Box>
+          </React.Suspense>
         </Toolbar>
       </Container>
     </AppBar>

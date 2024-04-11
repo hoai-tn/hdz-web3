@@ -190,7 +190,7 @@ const PresaleCard = () => {
           sx={{ mt: 1 }}
         />
       </Box>
-      <Button>BUY NOW</Button>
+      <Button variant="contained" fullWidth>BUY NOW</Button>
     </Box>
   );
 };

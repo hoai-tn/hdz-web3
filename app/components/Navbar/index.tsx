@@ -41,6 +41,7 @@ const pages = [
 
 function Navbar() {
   const { isConnected, address } = useWeb3ModalAccount();
+  const { disconnect } = useDisconnect();
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
     null
   );
@@ -131,7 +132,7 @@ function Navbar() {
           <React.Suspense fallback={<p>Loading feed...</p>}>
             <Box sx={{ flexGrow: 0 }}>
               {isConnected ? (
-                <Button variant="outlined" color="secondary">
+                <Button variant="outlined" color="secondary" onClick={disconnect}>
                   {showSortAddress(address)}
                 </Button>
               ) : (

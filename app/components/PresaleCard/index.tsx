@@ -16,6 +16,7 @@ import React, { useState } from "react";
 import LinearProgress, {
   linearProgressClasses,
 } from "@mui/material/LinearProgress";
+import { AccountCircle } from "@mui/icons-material";
 
 const PresaleCard = () => {
   const [buyMethod, setBuyMethod] = useState<String>("ETH");
@@ -25,7 +26,6 @@ const PresaleCard = () => {
         borderRadius: 4,
         padding: "22px 36px",
         maxWidth: 407,
-        height: 600,
         backgroundImage: `url('/img/white-board.jpg')`,
         backgroundRepeat: "no-repeat",
         backgroundSize: "100% 100%",
@@ -42,6 +42,7 @@ const PresaleCard = () => {
           px: 2,
           py: 1,
           borderRadius: 2,
+          mt: 2
         }}
       >
         <Box>
@@ -115,7 +116,7 @@ const PresaleCard = () => {
           sx={{ mt: 1 }}
         />
         <Typography marginTop={1} color="green">
-          1 DOGE20 = $0.00022
+          1 CTX = $0.00022
         </Typography>
         <Stack spacing={3} direction="row" marginTop={1}>
           <Button
@@ -136,43 +137,41 @@ const PresaleCard = () => {
             CARD
           </Button>
         </Stack>
-        <Box display="flex" gap={2}>
-          <FormControl fullWidth sx={{ mt: 1 }} variant="outlined">
-            <InputLabel
-              htmlFor="standard-adornment-amount"
-              sx={{ fontSize: 11 }}
-            >
-              Buy with ETH
-            </InputLabel>
-            <Input
-              id="standard-adornment-amount"
-              endAdornment={
-                <InputAdornment position="end">{buyMethod}</InputAdornment>
-              }
-              sx={{
-                fontSize: 13,
+        <Box display="flex" gap={2} marginTop={1}>
+          <Box>
+            <Typography align="left" fontSize={12}>Buy With {buyMethod}</Typography>
+            <TextField
+              id="input-with-icon-textfield"
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="start">
+                    <AccountCircle />
+                  </InputAdornment>
+                ),
+                sx: {
+                  fontSize: 13,
+                },
               }}
-              type="number"
+              variant="outlined"
             />
-          </FormControl>
-          <FormControl fullWidth sx={{ mt: 1 }} variant="outlined">
-            <InputLabel
-              htmlFor="standard-adornment-amount"
-              sx={{ fontSize: 11 }}
-            >
-              Max Receive DOGE20
-            </InputLabel>
-            <Input
-              id="standard-adornment-amount"
-              endAdornment={
-                <InputAdornment position="end">{buyMethod}</InputAdornment>
-              }
-              sx={{
-                fontSize: 13,
+          </Box>
+          <Box>
+            <Typography  align="left" fontSize={12}>Max Receive CTC</Typography>
+            <TextField
+              id="input-with-icon-textfield"
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="start">
+                    <AccountCircle />
+                  </InputAdornment>
+                ),
+                sx: {
+                  fontSize: 13,
+                },
               }}
-              type="number"
+              variant="outlined"
             />
-          </FormControl>
+          </Box>
         </Box>
         <Typography
           variant="subtitle2"
@@ -190,7 +189,9 @@ const PresaleCard = () => {
           sx={{ mt: 1 }}
         />
       </Box>
-      <Button variant="contained" fullWidth>BUY NOW</Button>
+      <Button variant="contained" fullWidth>
+        BUY NOW
+      </Button>
     </Box>
   );
 };

@@ -15,7 +15,7 @@ const Footer = () => {
       }}
     >
       <Typography variant="h6" align="center" paddingBottom={2}>
-        © 2024 | DOGwifCATcoin | All Rights Reserved
+        © 2024 | CAT CUTE | All Rights Reserved
       </Typography>
     </Box>
   );

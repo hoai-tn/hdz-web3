@@ -47,18 +47,18 @@ const Tokenomics = () => {
           >
             <Typography variant="h5">CAT Token Metrics</Typography>
             <Typography>
-              DOGE20 tokenomics include smart staking rewards, meaning you can
+              $CTC tokenomics include smart staking rewards, meaning you can
               earn right away.
             </Typography>
             <ul className="list-disc pl-4 py-5">
+              <li>35% used for staking rewards</li>
               <li>25% of supply sold in presale</li>
-              <li>25% allocated to marketing</li>
-              <li>25% for the project treasury</li>
-              <li>15% used for staking rewards</li>
-              <li>10% for exchange liquidity</li>
+              <li>20% for team</li>
+              <li>10% allocated to marketing</li>
+              <li>10% used for liquidity</li>
             </ul>
             <Typography>
-              DOGE20 Token Address: 
+              $CTC Token Address: 
             </Typography>
           </Box>
         </Box>

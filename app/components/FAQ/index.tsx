@@ -18,11 +18,10 @@ export default function FAQ() {
           aria-controls="panel1-content"
           id="panel1-header"
         >
-          Accordion 1
+         What is $CTC meme token?
         </AccordionSummary>
         <AccordionDetails>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
-          malesuada lacus ex, sit amet blandit leo lobortis eget.
+        $CTC is a decentralized cryptocurrency token that originated as a meme within the cryptocurrency community. It typically features an image or symbol that represents a humorous or satirical concept. While some meme tokens have limited utility beyond entertainment or speculation, others may have underlying projects or communities supporting them.
         </AccordionDetails>
       </Accordion>
       <Accordion sx={{ bgcolor: "transparent", boxShadow: "none" }}>
@@ -31,11 +30,10 @@ export default function FAQ() {
           aria-controls="panel2-content"
           id="panel2-header"
         >
-          Accordion 2
+          Why you should buy $CTC
         </AccordionSummary>
         <AccordionDetails>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
-          malesuada lacus ex, sit amet blandit leo lobortis eget.
+        Like many meme tokens, $CTC may offer the potential for significant price appreciation over time. If the token gains traction within the cryptocurrency community or attracts a dedicated following, its value could increase substantially.
         </AccordionDetails>
       </Accordion>
       <Accordion sx={{ bgcolor: "transparent", boxShadow: "none" }}>
@@ -44,11 +42,10 @@ export default function FAQ() {
           aria-controls="panel3-content"
           id="panel3-header"
         >
-          Accordion Actions
+         Is investing in $CTC token risky?
         </AccordionSummary>
         <AccordionDetails>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
-          malesuada lacus ex, sit amet blandit leo lobortis eget.
+        Like many meme tokens and cryptocurrencies, investing in $CTC carries inherent risks. The cryptocurrency market is known for its volatility, with prices often experiencing significant fluctuations in short periods. Additionally, meme tokens may lack fundamental value or utility beyond speculative trading, making them susceptible to rapid price changes and potential losses. Investors should conduct thorough research, exercise caution, and only invest what they can afford to lose when considering $CTC or any meme token.
         </AccordionDetails>
       </Accordion>
     </Container>

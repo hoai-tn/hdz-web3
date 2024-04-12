@@ -36,7 +36,7 @@ const About = () => {
         }}
       >
         <Image
-          src="/img/cat-rocket.png"
+          src="/img/cat-rocket1.png"
           width={310}
           height={100}
           alt="cat-rocket"

@@ -22,7 +22,7 @@ const theme = createTheme({
   palette: {
     primary: {
       main: "#eda55c",
-      contrastText: "inherit",
+      contrastText: "white",
     },
     // secondary: {
     //   main: "#0d1421",

@@ -28,7 +28,7 @@ import {
   useDisconnect,
   useWeb3Modal,
   useWeb3ModalAccount,
-} from "@web3modal/ethers5/react";
+} from "@web3modal/ethers/react";
 import { showSortAddress } from "@/app/utils";
 
 const pages = [

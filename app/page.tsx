@@ -6,6 +6,7 @@ import About from "./components/About";
 import Tokenomics from "./components/Tokenomics";
 import FAQ from "./components/FAQ";
 import Image from "next/image";
+import Loading from "./Loading";
 const Home = () => {
   return (
     <div>
@@ -13,7 +14,7 @@ const Home = () => {
       <Tokenomics />
       <Container maxWidth="md">
         <Image
-         className="mx-auto scale-y-[-1]"
+          className="mx-auto scale-y-[-1]"
           src="/img/paws.png"
           width={150}
           height={100}

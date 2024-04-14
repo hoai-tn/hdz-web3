@@ -48,7 +48,9 @@ const Header = () => {
               <Button variant="contained" sx={{ color: "white" }}>
                 WHITEPAER
               </Button>
-              <Button variant="outlined">AUDIT</Button>
+              <Button variant="outlined" sx={{ color: "#8e4d0b" }}>
+                AUDIT
+              </Button>
             </Stack>
           </Box>
           {/* <Image src="/img/cat.png" width={300} height={100} alt="banner" /> */}

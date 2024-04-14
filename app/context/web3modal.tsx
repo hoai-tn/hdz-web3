@@ -1,6 +1,6 @@
 "use client";
 
-import { createWeb3Modal, defaultConfig } from "@web3modal/ethers5/react";
+import { createWeb3Modal, defaultConfig } from "@web3modal/ethers/react";
 import { ReactNode } from "react";
 
 // 1. Get projectId at https://cloud.walletconnect.com
@@ -19,7 +19,7 @@ const testnet = {
   name: "Sepolia",
   currency: "ETH",
   explorerUrl: "https://sepolia.etherscan.io",
-  rpcUrl: "https://sepolia.infura.io/v3/68346cb6b2304194acda1a3b78945b43",
+  rpcUrl: process.env.NEXT_PUBLIC_RPC_TESTNET || "",
 };
 // 3. Create a metadata object
 const metadata = {

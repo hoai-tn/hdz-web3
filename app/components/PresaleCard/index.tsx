@@ -8,18 +8,118 @@ import {
   InputAdornment,
   InputLabel,
   OutlinedInput,
+  Skeleton,
   Stack,
   TextField,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { ChangeEvent, Suspense, useEffect, useState } from "react";
 import LinearProgress, {
   linearProgressClasses,
 } from "@mui/material/LinearProgress";
 import { AccountCircle } from "@mui/icons-material";
-
+import HDZContract from "@/app/contracts/HDZContract";
+import {
+  useWeb3ModalAccount,
+  useWeb3ModalProvider,
+} from "@web3modal/ethers/react";
+import {
+  BrowserProvider,
+  ethers,
+  EtherscanProvider,
+  getDefaultProvider,
+  JsonRpcProvider,
+} from "ethers";
+import { getHDZAbi } from "@/app/contracts/utils/getAbis";
+import { checkAmount, formatNumber } from "@/app/utils";
+import PresaleTime from "./PresaleTime";
+import { getCrowdSaleAddress } from "@/app/contracts/utils/getAddress";
+import { PUBLIC_CHAIN_ID, RPC_TESTNET } from "@/app/contracts/utils/common";
+import CrowdsaleContract from "@/app/contracts/CrowdsaleContract";
+import CrowdsaleProgressBar from "./CrowdsaleProgressBar";
+import Image from "next/image";
 const PresaleCard = () => {
   const [buyMethod, setBuyMethod] = useState<String>("ETH");
+  const { walletProvider } = useWeb3ModalProvider();
+  const { address } = useWeb3ModalAccount();
+
+  const [tokenBalance, setTokenBalance] = useState(0);
+  const [crowdBalance, setCrowdBalance] = useState(0);
+  const [usdtRate, setUsdtRate] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const [amountBuy, setAmountBuy] = useState(0);
+  const [amountTokenReceive, setAmountTokenReceive] = useState(0);
+  const crowdsaleTokenAmount = 1200000000;
+
+  useEffect(() => {
+    const getTokenBalance = async () => {
+      // get balanceOfWallet token
+      if (walletProvider && address) {
+        const provider = await new BrowserProvider(walletProvider);
+        const hdzContract = new HDZContract(provider);
+        const balance = await hdzContract.balanceOf(address);
+        setTokenBalance(balance);
+      } else {
+        setTokenBalance(0);
+      }
+    };
+    getTokenBalance();
+  });
+
+  useEffect(() => {
+    const getCrowdsaleInfo = async () => {
+      try {
+        //get balance of crowsale contract
+        const provider = await new JsonRpcProvider(RPC_TESTNET);
+
+        const hdzContract = new HDZContract(provider);
+        const crowdsaleContract = new CrowdsaleContract(provider);
+
+        const crowdSaleBalance = await hdzContract.balanceOf(
+          getCrowdSaleAddress()
+        );
+        const usdtRate = await crowdsaleContract.getUsdtRate();
+
+        setUsdtRate(usdtRate);
+        setCrowdBalance(crowdSaleBalance);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    getCrowdsaleInfo();
+  }, []);
+
+  const handleChangeAmountBuy = (e: ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    let amountReceive = 0;
+    if (checkAmount(value)) {
+      if (!Number.isNaN(value)) {
+        amountReceive =
+          buyMethod == "ETH"
+            ? Number(value) * 1000000
+            : Number(value) * usdtRate;
+        setAmountTokenReceive(() => amountReceive);
+      }
+      setAmountBuy(() => value);
+    } else {
+      setAmountBuy((prev) => prev);
+    }
+  };
+
+  const handleChangeAmountReceive = (e: ChangeEvent<HTMLInputElement>) => {
+    const value = Number(e.target.value);
+    let amountToBuy = 0;
+    if (!Number.isNaN(value)) {
+      amountToBuy = buyMethod == "ETH" ? value / 1000000 : value / usdtRate;
+      setAmountTokenReceive(() => value);
+      setAmountBuy(() => amountToBuy);
+    } else {
+      setAmountTokenReceive((prev) => prev);
+    }
+  };
   return (
     <Box
       sx={{
@@ -31,67 +131,21 @@ const PresaleCard = () => {
         backgroundSize: "100% 100%",
       }}
     >
-      <Typography textAlign="center" fontSize={20} fontWeight={800}>
-        CTC launches on doge day! Last chance to buy!
-      </Typography>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          bgcolor: "#d4e06a",
-          px: 2,
-          py: 1,
-          borderRadius: 2,
-          mt: 2
-        }}
+      <Typography
+        textAlign="center"
+        fontSize={20}
+        fontWeight={800}
+        color="black"
       >
-        <Box>
-          <Typography>12</Typography>
-          <Typography fontSize={12}>Day</Typography>
-        </Box>
-        <Box>
-          <Typography>03</Typography>
-          <Typography fontSize={12}>HRS</Typography>
-        </Box>
-        <Box>
-          <Typography>12</Typography>
-          <Typography fontSize={12}>MINS</Typography>
-        </Box>
-        <Box>
-          <Typography>12</Typography>
-          <Typography fontSize={12}>SEC</Typography>
-        </Box>
-      </Box>
-
-      {/* <BorderLinearProgress variant="determinate" value={50} /> */}
-      <Box marginTop={2}>
-        <Box display="flex" justifyContent="space-between">
-          <Typography variant="subtitle2" fontSize={12} color="#9b8e8e">
-            2,415,431,413 SATX
-          </Typography>
-          <Typography variant="subtitle2" fontSize={12} color="#9b8e8e">
-            2,415,431,413 SATX
-          </Typography>
-        </Box>
-        <LinearProgress
-          variant="determinate"
-          value={70}
-          sx={{
-            height: 28,
-            borderRadius: 5,
-            border: 2,
-            borderColor: "#723813",
-          }}
-        />
-        <Box display="flex" justifyContent="space-between">
-          <Typography variant="subtitle2" fontSize={12} color="#e78711">
-            1,415,431,413 USD
-          </Typography>
-          <Typography variant="subtitle2" fontSize={12} color="#e78711">
-            1,415,431,413 USD
-          </Typography>
-        </Box>
-      </Box>
+        CTC launches on doge day! Last chance to buy! {String(isLoading)}
+      </Typography>
+      <PresaleTime isLoading={isLoading} />
+      <CrowdsaleProgressBar
+        isLoading={isLoading}
+        crowdBalance={crowdBalance}
+        crowdsaleTokenAmount={crowdsaleTokenAmount}
+        usdtRate={usdtRate}
+      />
       <Box marginTop={2} textAlign="center" sx={{ mx: "auto" }}>
         <Typography
           variant="subtitle2"
@@ -99,7 +153,7 @@ const PresaleCard = () => {
           color="#9b8e8e"
           marginTop={1}
         >
-          Your purchased DOGE20 = 0
+          Your purchased CTC = {formatNumber(tokenBalance)}
         </Typography>
         <Typography
           variant="subtitle2"
@@ -107,7 +161,7 @@ const PresaleCard = () => {
           color="#9b8e8e"
           marginTop={1}
         >
-          Your stakeable DOGE20 = 0
+          Your stakeable CTC = 0
         </Typography>
         <Divider
           orientation="horizontal"
@@ -116,13 +170,16 @@ const PresaleCard = () => {
           sx={{ mt: 1 }}
         />
         <Typography marginTop={1} color="green">
-          1 CTX = $0.00022
+          1 CTC = ${1 / usdtRate}
         </Typography>
         <Stack spacing={3} direction="row" marginTop={1}>
           <Button
             variant="outlined"
             size="large"
             onClick={() => setBuyMethod("ETH")}
+            sx={{
+              color: buyMethod == "ETH" ? "theme.primary" : "#c1aa90",
+            }}
           >
             ETH
           </Button>
@@ -130,6 +187,9 @@ const PresaleCard = () => {
             variant="outlined"
             size="large"
             onClick={() => setBuyMethod("USDT")}
+            sx={{
+              color: buyMethod == "USDT" ? "theme.primary" : "#c1aa90",
+            }}
           >
             USDT
           </Button>
@@ -139,13 +199,32 @@ const PresaleCard = () => {
         </Stack>
         <Box display="flex" gap={2} marginTop={1}>
           <Box>
-            <Typography align="left" fontSize={12}>Buy With {buyMethod}</Typography>
+            <Typography align="left" fontSize={12}>
+              Buy With {buyMethod}
+            </Typography>
             <TextField
               id="input-with-icon-textfield"
+              value={amountBuy}
+              onChange={handleChangeAmountBuy}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="start">
-                    <AccountCircle />
+                    {buyMethod == "ETH" ? (
+                      <Image
+                        src="/img/eth-logo.svg"
+                        width={25}
+                        height={15}
+                        alt="eth-icon"
+                        style={{ marginLeft: 5 }}
+                      />
+                    ) : (
+                      <Image
+                        src="/img/usdt-logo.svg"
+                        width={30}
+                        height={15}
+                        alt="eth-icon"
+                      />
+                    )}
                   </InputAdornment>
                 ),
                 sx: {
@@ -156,13 +235,22 @@ const PresaleCard = () => {
             />
           </Box>
           <Box>
-            <Typography  align="left" fontSize={12}>Max Receive CTC</Typography>
+            <Typography align="left" fontSize={12}>
+              Max Receive CTC
+            </Typography>
             <TextField
               id="input-with-icon-textfield"
+              value={amountTokenReceive}
+              onChange={handleChangeAmountReceive}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="start">
-                    <AccountCircle />
+                    <Image
+                      src="/img/ctc-logo.svg"
+                      width={25}
+                      height={20}
+                      alt="ctc-icon"
+                    />
                   </InputAdornment>
                 ),
                 sx: {

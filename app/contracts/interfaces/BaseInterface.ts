@@ -12,6 +12,8 @@ import {
   InterfaceAbi,
   JsonRpcApiProvider,
   Overrides,
+  parseEther,
+  TransactionResponse,
 } from "ethers";
 
 export default class BaseInterface {
@@ -34,14 +36,14 @@ export default class BaseInterface {
     this._contract = new ethers.Contract(address, abi, provider);
   }
 
-  // _handleTransactionResponse = async(tx: TransactionResponse) => {
-  //     const recept = await tx.wait();
-  //     return recept.transactionHash;
-  // }
+  _handleTransactionResponse = async(tx: TransactionResponse) => {
+      const recept = await tx.wait();
+      return recept?.hash;
+  }
 
-  // _numberToEth = (amount: number) => {
-  //   return ethers.utils.parseEther(amount.toString());
-  // }
+  _numberToEth = (amount: number) => {
+    return parseEther(amount.toString());
+  }
 
   _toNumber = (bigNumber: BigNumberish) => {
     return Number.parseFloat(formatEther(bigNumber));

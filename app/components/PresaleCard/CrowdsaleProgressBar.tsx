@@ -24,7 +24,7 @@ const CrowdsaleProgressBar = ({isLoading, crowdsaleTokenAmount, crowdBalance, us
             {formatNumber(crowdsaleTokenAmount - crowdBalance)} CTC
           </Typography>
           <Typography variant="subtitle2" fontSize={12} color="#9b8e8e">
-            {formatNumber(crowdsaleTokenAmount)} CTC
+            {formatNumber(crowdsaleTokenAmount)} CTC 
           </Typography>
         </Box>
         <LinearProgress

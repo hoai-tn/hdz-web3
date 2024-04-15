@@ -38,19 +38,26 @@ import { PUBLIC_CHAIN_ID, RPC_TESTNET } from "@/app/contracts/utils/common";
 import CrowdsaleContract from "@/app/contracts/CrowdsaleContract";
 import CrowdsaleProgressBar from "./CrowdsaleProgressBar";
 import Image from "next/image";
+import USDTContract from "@/app/contracts/USDTContract";
 const PresaleCard = () => {
   const [buyMethod, setBuyMethod] = useState<String>("ETH");
   const { walletProvider } = useWeb3ModalProvider();
   const { address } = useWeb3ModalAccount();
 
   const [tokenBalance, setTokenBalance] = useState(0);
+  const [usdtBalanceOfWallet, setUsdtBalanceOfWallet] = useState(0);
+  const [ethBalanceOfWallet, setEthBalanceOfWallet] = useState(0);
+
   const [crowdBalance, setCrowdBalance] = useState(0);
+
   const [usdtRate, setUsdtRate] = useState(0);
+  const [ethRate, setEthRate] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
 
-  const [amountBuy, setAmountBuy] = useState(0);
+  const [amountBuy, setAmountBuy] = useState<any>(0);
   const [amountTokenReceive, setAmountTokenReceive] = useState(0);
-  const crowdsaleTokenAmount = 1200000000;
+
+  const crowdsaleTokenAmount = 1000000000;
 
   useEffect(() => {
     const getTokenBalance = async () => {
@@ -58,10 +65,19 @@ const PresaleCard = () => {
       if (walletProvider && address) {
         const provider = await new BrowserProvider(walletProvider);
         const hdzContract = new HDZContract(provider);
+        const usdtContract = new USDTContract(provider);
+
         const balance = await hdzContract.balanceOf(address);
+        const usdtBalanceOfWallet = await usdtContract.balanceOf(address);
+        const ethers = await provider.getBalance(address);
+
+        setUsdtBalanceOfWallet(usdtBalanceOfWallet);
+        setEthBalanceOfWallet(usdtContract._toNumber(ethers));
         setTokenBalance(balance);
       } else {
         setTokenBalance(0);
+        setUsdtBalanceOfWallet(0);
+        setEthBalanceOfWallet(0);
       }
     };
     getTokenBalance();
@@ -75,12 +91,13 @@ const PresaleCard = () => {
 
         const hdzContract = new HDZContract(provider);
         const crowdsaleContract = new CrowdsaleContract(provider);
-
         const crowdSaleBalance = await hdzContract.balanceOf(
           getCrowdSaleAddress()
         );
         const usdtRate = await crowdsaleContract.getUsdtRate();
-
+        const ethRate = await crowdsaleContract.getEthRate();
+          
+        setEthRate(ethRate);
         setUsdtRate(usdtRate);
         setCrowdBalance(crowdSaleBalance);
       } catch (error) {
@@ -99,13 +116,13 @@ const PresaleCard = () => {
       if (!Number.isNaN(value)) {
         amountReceive =
           buyMethod == "ETH"
-            ? Number(value) * 1000000
+            ? Number(value) * ethRate
             : Number(value) * usdtRate;
         setAmountTokenReceive(() => amountReceive);
       }
       setAmountBuy(() => value);
     } else {
-      setAmountBuy((prev) => prev);
+      setAmountBuy((prev: any) => prev);
     }
   };
 
@@ -118,6 +135,31 @@ const PresaleCard = () => {
       setAmountBuy(() => amountToBuy);
     } else {
       setAmountTokenReceive((prev) => prev);
+    }
+  };
+
+  const checkBalanceOfWallet = () => {
+    if (buyMethod === "USDT")
+      return usdtBalanceOfWallet > 0 && usdtBalanceOfWallet >= amountBuy;
+    if (buyMethod === "ETH")
+      return ethBalanceOfWallet > 0 && ethBalanceOfWallet > amountBuy;
+  };
+
+  const handleBuyToken = async () => {
+    if (walletProvider) {
+      const provider = await new BrowserProvider(walletProvider).getSigner();
+
+      const crowdsaleContract = new CrowdsaleContract(provider);
+
+      if (buyMethod === "USDT") {
+        const usdtContract = new USDTContract(provider);
+        await usdtContract.approve(
+          crowdsaleContract._contractAddress,
+          amountBuy
+        );
+        const hash = await crowdsaleContract.buyTokenByUSDT(amountBuy);
+        console.log({ hash });
+      }
     }
   };
   return (
@@ -137,7 +179,7 @@ const PresaleCard = () => {
         fontWeight={800}
         color="black"
       >
-        CTC launches on doge day! Last chance to buy! {String(isLoading)}
+        CTC launches on doge day! Last chance to buy!
       </Typography>
       <PresaleTime isLoading={isLoading} />
       <CrowdsaleProgressBar
@@ -261,15 +303,21 @@ const PresaleCard = () => {
             />
           </Box>
         </Box>
-        <Typography
-          variant="subtitle2"
-          fontSize={10}
-          color="#cc3770"
-          marginTop={1}
-          align="center"
-        >
-          You do not have enough {buyMethod} to pay for this transaction.
-        </Typography>
+        {isLoading
+          ? ""
+          : !checkBalanceOfWallet() &&
+            walletProvider && (
+              <Typography
+                variant="subtitle2"
+                fontSize={10}
+                color="#cc3770"
+                marginTop={1}
+                align="center"
+              >
+                You do not have enough {buyMethod} to pay for this transaction.
+              </Typography>
+            )}
+
         <Divider
           orientation="horizontal"
           variant="middle"
@@ -277,7 +325,12 @@ const PresaleCard = () => {
           sx={{ mt: 1 }}
         />
       </Box>
-      <Button variant="contained" fullWidth>
+      <Button
+        variant="contained"
+        fullWidth
+        disabled={!checkBalanceOfWallet()}
+        onClick={handleBuyToken}
+      >
         BUY NOW
       </Button>
     </Box>

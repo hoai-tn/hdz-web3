@@ -28,6 +28,14 @@ class Erc20 extends BaseInterface {
       throw error;
     }
   }
+  async allowance(owner, spender): Promise<number> {
+    try {
+      const allowanceAmount = await this._contract.allowance(owner, spender);
+      return this._toNumber(allowanceAmount);
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 export default Erc20;

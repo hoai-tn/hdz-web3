@@ -96,7 +96,7 @@ const PresaleCard = () => {
         );
         const usdtRate = await crowdsaleContract.getUsdtRate();
         const ethRate = await crowdsaleContract.getEthRate();
-          
+
         setEthRate(ethRate);
         setUsdtRate(usdtRate);
         setCrowdBalance(crowdSaleBalance);
@@ -153,10 +153,17 @@ const PresaleCard = () => {
 
       if (buyMethod === "USDT") {
         const usdtContract = new USDTContract(provider);
-        await usdtContract.approve(
-          crowdsaleContract._contractAddress,
-          amountBuy
+        const allowanceAmount = await usdtContract.allowance(
+          address,
+          crowdsaleContract._contractAddress
         );
+        console.log({allowanceAmount});
+        
+        if (allowanceAmount < amountBuy)
+          await usdtContract.approve(
+            crowdsaleContract._contractAddress,
+            amountBuy
+          );
         const hash = await crowdsaleContract.buyTokenByUSDT(amountBuy);
         console.log({ hash });
       }

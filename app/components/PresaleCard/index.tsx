@@ -2,6 +2,11 @@
 import {
   Box,
   Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   Divider,
   FormControl,
   Input,
@@ -29,9 +34,10 @@ import {
   EtherscanProvider,
   getDefaultProvider,
   JsonRpcProvider,
+  parseEther,
 } from "ethers";
 import { getHDZAbi } from "@/app/contracts/utils/getAbis";
-import { checkAmount, formatNumber } from "@/app/utils";
+import { checkAmount, formatNumber, showTransactionHash } from "@/app/utils";
 import PresaleTime from "./PresaleTime";
 import { getCrowdSaleAddress } from "@/app/contracts/utils/getAddress";
 import { PUBLIC_CHAIN_ID, RPC_TESTNET } from "@/app/contracts/utils/common";
@@ -39,6 +45,7 @@ import CrowdsaleContract from "@/app/contracts/CrowdsaleContract";
 import CrowdsaleProgressBar from "./CrowdsaleProgressBar";
 import Image from "next/image";
 import USDTContract from "@/app/contracts/USDTContract";
+import Link from "next/link";
 const PresaleCard = () => {
   const [buyMethod, setBuyMethod] = useState<String>("ETH");
   const { walletProvider } = useWeb3ModalProvider();
@@ -56,50 +63,52 @@ const PresaleCard = () => {
 
   const [amountBuy, setAmountBuy] = useState<any>(0);
   const [amountTokenReceive, setAmountTokenReceive] = useState(0);
+  const [hash, setHash] = useState("");
+  const [open, setOpen] = React.useState(false);
 
   const crowdsaleTokenAmount = 1000000000;
 
   useEffect(() => {
-    const getTokenBalance = async () => {
-      // get balanceOfWallet token
-      if (walletProvider && address) {
-        const provider = await new BrowserProvider(walletProvider);
-        const hdzContract = new HDZContract(provider);
-        const usdtContract = new USDTContract(provider);
-
-        const balance = await hdzContract.balanceOf(address);
-        const usdtBalanceOfWallet = await usdtContract.balanceOf(address);
-        const ethers = await provider.getBalance(address);
-
-        setUsdtBalanceOfWallet(usdtBalanceOfWallet);
-        setEthBalanceOfWallet(usdtContract._toNumber(ethers));
-        setTokenBalance(balance);
-      } else {
-        setTokenBalance(0);
-        setUsdtBalanceOfWallet(0);
-        setEthBalanceOfWallet(0);
-      }
-    };
     getTokenBalance();
   });
+  const getTokenBalance = async () => {
+    const provider = await new JsonRpcProvider(RPC_TESTNET);
+    const hdzContract = new HDZContract(provider);
+    const crowdSaleBalance = await hdzContract.balanceOf(getCrowdSaleAddress());
+    setCrowdBalance(crowdSaleBalance);
 
+    // get balanceOfWallet token
+    if (walletProvider && address) {
+      const provider = await new BrowserProvider(walletProvider);
+      const hdzContract = new HDZContract(provider);
+      const usdtContract = new USDTContract(provider);
+
+      const balance = await hdzContract.balanceOf(address);
+      const usdtBalanceOfWallet = await usdtContract.balanceOf(address);
+      const ethers = await provider.getBalance(address);
+
+      setUsdtBalanceOfWallet(usdtBalanceOfWallet);
+      setEthBalanceOfWallet(usdtContract._toNumber(ethers));
+      setTokenBalance(balance);
+    } else {
+      setTokenBalance(0);
+      setUsdtBalanceOfWallet(0);
+      setEthBalanceOfWallet(0);
+    }
+  };
   useEffect(() => {
     const getCrowdsaleInfo = async () => {
       try {
         //get balance of crowsale contract
         const provider = await new JsonRpcProvider(RPC_TESTNET);
 
-        const hdzContract = new HDZContract(provider);
         const crowdsaleContract = new CrowdsaleContract(provider);
-        const crowdSaleBalance = await hdzContract.balanceOf(
-          getCrowdSaleAddress()
-        );
+
         const usdtRate = await crowdsaleContract.getUsdtRate();
         const ethRate = await crowdsaleContract.getEthRate();
 
         setEthRate(ethRate);
         setUsdtRate(usdtRate);
-        setCrowdBalance(crowdSaleBalance);
       } catch (error) {
         console.log(error);
       } finally {
@@ -130,7 +139,7 @@ const PresaleCard = () => {
     const value = Number(e.target.value);
     let amountToBuy = 0;
     if (!Number.isNaN(value)) {
-      amountToBuy = buyMethod == "ETH" ? value / 1000000 : value / usdtRate;
+      amountToBuy = buyMethod == "ETH" ? value * ethRate : value * usdtRate;
       setAmountTokenReceive(() => value);
       setAmountBuy(() => amountToBuy);
     } else {
@@ -157,17 +166,37 @@ const PresaleCard = () => {
           address,
           crowdsaleContract._contractAddress
         );
-        console.log({allowanceAmount});
-        
+
         if (allowanceAmount < amountBuy)
           await usdtContract.approve(
             crowdsaleContract._contractAddress,
             amountBuy
           );
-        const hash = await crowdsaleContract.buyTokenByUSDT(amountBuy);
-        console.log({ hash });
+        const getHash = await crowdsaleContract.buyTokenByUSDT(amountBuy);
+
+        if (getHash) {
+          setHash(getHash);
+          handleClickOpen();
+        }
+      } else if (buyMethod === "ETH") {
+        if (ethBalanceOfWallet > amountBuy) {
+          const getHash = await crowdsaleContract.buyTokenByETH(amountBuy);
+          if (getHash) {
+            setHash(getHash);
+            handleClickOpen();
+          }
+        }
       }
+      await getTokenBalance();
     }
+  };
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
   };
   return (
     <Box
@@ -340,6 +369,35 @@ const PresaleCard = () => {
       >
         BUY NOW
       </Button>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+        maxWidth="xs"
+      >
+        <DialogTitle id="alert-dialog-title" color="#388e3c">
+          Buy CTC successfully!
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            <Typography color="#395f95">
+              <Link
+                href={`https://sepolia.etherscan.io/tx/${hash}`}
+                color="red"
+                target="_blank"
+              >
+                View TX Details on Etherscan {showTransactionHash(hash)}
+              </Link>
+            </Typography>
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} autoFocus>
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };

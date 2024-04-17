@@ -240,7 +240,7 @@
         "type": "uint256"
       }
     ],
-    "name": "byTokenByUSDT",
+    "name": "buyTokenByUSDT",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

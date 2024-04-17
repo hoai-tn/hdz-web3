@@ -13,19 +13,30 @@ export default class CrowdsaleContract extends BaseInterface {
   }
   async getUsdtRate(): Promise<number> {
     const usdtRate = await this._contract.USDT_rate();
-    return this._toNumber(usdtRate);
+    return Number(usdtRate);
   }
 
   async getEthRate(): Promise<number> {
     const ethRate = await this._contract.ETH_rate();
-    return this._toNumber(ethRate);
+    return Number(ethRate);
   }
   async buyTokenByUSDT(amount: number) {
     try {
-      const tx = await this._contract.byTokenByUSDT(
+      const tx = await this._contract.buyTokenByUSDT(
         parseUnits(amount),
         this._option
       );
+      return this._handleTransactionResponse(tx);
+    } catch (error) {
+      throw error;
+    }
+  }
+  async buyTokenByETH(value: number) {
+    try {
+      const tx = await this._contract.buyTokenByETH({
+        ...this._option,
+        value: parseUnits(value),
+      });
       return this._handleTransactionResponse(tx);
     } catch (error) {
       throw error;

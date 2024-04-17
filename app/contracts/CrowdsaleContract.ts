@@ -1,13 +1,14 @@
-import { AbstractProvider, parseUnits } from "ethers";
+import { AbstractProvider, Signer, parseUnits } from "ethers";
 import { EtherscanProvider } from "ethers";
 import { BrowserProvider } from "ethers";
 import { getCrowdSaleAbi } from "./utils/getAbis";
 import { BaseInterface } from "./interfaces";
 import { getCrowdSaleAddress } from "./utils/getAddress";
+import { ProviderType } from "./interfaces/BaseInterface";
 
 export default class CrowdsaleContract extends BaseInterface {
   constructor(
-    provider: BrowserProvider | EtherscanProvider | AbstractProvider
+    provider: ProviderType
   ) {
     super(provider, getCrowdSaleAddress(), getCrowdSaleAbi());
   }
@@ -23,7 +24,7 @@ export default class CrowdsaleContract extends BaseInterface {
   async buyTokenByUSDT(amount: number) {
     try {
       const tx = await this._contract.buyTokenByUSDT(
-        parseUnits(amount),
+        parseUnits(amount.toString()),
         this._option
       );
       return this._handleTransactionResponse(tx);
@@ -35,7 +36,7 @@ export default class CrowdsaleContract extends BaseInterface {
     try {
       const tx = await this._contract.buyTokenByETH({
         ...this._option,
-        value: parseUnits(value),
+        value: parseUnits(value.toString()),
       });
       return this._handleTransactionResponse(tx);
     } catch (error) {

@@ -11,23 +11,26 @@ import {
   formatEther,
   InterfaceAbi,
   JsonRpcApiProvider,
+  JsonRpcSigner,
   Overrides,
   parseEther,
+  Signer,
   TransactionResponse,
 } from "ethers";
 
+export type ProviderType =
+  | BrowserProvider
+  | EtherscanProvider
+  | AbstractProvider
+  | JsonRpcSigner;
 export default class BaseInterface {
-  _provider: BrowserProvider | EtherscanProvider | AbstractProvider;
+  _provider: ProviderType;
   _contractAddress: string;
   _abis: InterfaceAbi;
   _contract: ethers.Contract;
   _option: Overrides;
 
-  constructor(
-    provider: BrowserProvider | EtherscanProvider | AbstractProvider,
-    address: string,
-    abi: InterfaceAbi
-  ) {
+  constructor(provider: ProviderType, address: string, abi: InterfaceAbi) {
     this._provider = provider;
     this._contractAddress = address;
     this._abis = abi;
@@ -36,14 +39,14 @@ export default class BaseInterface {
     this._contract = new ethers.Contract(address, abi, provider);
   }
 
-  _handleTransactionResponse = async(tx: TransactionResponse) => {
-      const recept = await tx.wait();
-      return recept?.hash;
-  }
+  _handleTransactionResponse = async (tx: TransactionResponse) => {
+    const recept = await tx.wait();
+    return recept?.hash;
+  };
 
   _numberToEth = (amount: number) => {
     return parseEther(amount.toString());
-  }
+  };
 
   _toNumber = (bigNumber: BigNumberish) => {
     return Number.parseFloat(formatEther(bigNumber));

@@ -155,7 +155,7 @@ const PresaleCard = () => {
   };
 
   const handleBuyToken = async () => {
-    if (walletProvider) {
+    if (walletProvider && address) {
       const provider = await new BrowserProvider(walletProvider).getSigner();
 
       const crowdsaleContract = new CrowdsaleContract(provider);

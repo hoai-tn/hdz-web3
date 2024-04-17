@@ -6,7 +6,6 @@ import About from "./components/About";
 import Tokenomics from "./components/Tokenomics";
 import FAQ from "./components/FAQ";
 import Image from "next/image";
-import Loading from "./Loading";
 const Home = () => {
   return (
     <div>

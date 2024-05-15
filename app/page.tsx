@@ -26,9 +26,3 @@ const Home = () => {
 };
 
 export default Home;
-//balance dailyreport
-//balance dailyreport
-
-//fee total comitsion
-//profit precent compare balance
-//withdraw lastransaction

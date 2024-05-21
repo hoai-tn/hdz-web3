@@ -36,6 +36,7 @@ const pages = [
   { href: "#tokenomics", name: "Tokenomics" },
   { href: "staking", name: "Staking" },
   { href: "nft", name: "NFT" },
+  { href: "crowdfunding", name: "CrowdFunding" },
   { href: "#FAQ", name: "FAQ" },
 ];
 
@@ -132,7 +133,11 @@ function Navbar() {
           <React.Suspense fallback={<p>Loading feed...</p>}>
             <Box sx={{ flexGrow: 0 }}>
               {isConnected ? (
-                <Button variant="outlined" color="secondary" onClick={disconnect}>
+                <Button
+                  variant="outlined"
+                  color="secondary"
+                  onClick={disconnect}
+                >
                   {showSortAddress(address)}
                 </Button>
               ) : (

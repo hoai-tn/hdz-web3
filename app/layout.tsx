@@ -26,8 +26,7 @@ export default function RootLayout({
           <Web3Modal>
             <div>
               <Navbar />
-              <Header />
-              <div>{children}</div>
+              <div className="min-h-[18rem]">{children}</div>
             </div>
             <Footer />
           </Web3Modal>

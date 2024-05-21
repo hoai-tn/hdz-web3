@@ -16,7 +16,15 @@ export const formatNumber = (number: number) => {
   return number.toLocaleString("en-US");
 };
 
-export const checkAmount = (amount: string) : boolean => {
+export const checkAmount = (amount: string): boolean => {
   var patten = /^-?\d*\.?\d*$/;
   return patten.test(amount);
 };
+
+export function showShortDescription(text: string, wordLimit: number): string {
+  const words = text.split(" ");
+  if (words.length > wordLimit) {
+    return words.slice(0, wordLimit).join(" ") + "...";
+  }
+  return text;
+}

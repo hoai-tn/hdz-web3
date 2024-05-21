@@ -6,9 +6,11 @@ import About from "./components/About";
 import Tokenomics from "./components/Tokenomics";
 import FAQ from "./components/FAQ";
 import Image from "next/image";
+import Header from "./components/Header";
 const Home = () => {
   return (
     <div>
+      <Header/>
       <About />
       <Tokenomics />
       <Container maxWidth="md">

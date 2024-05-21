@@ -12,6 +12,7 @@ const Footer = () => {
         backgroundRepeat: "no-repeat",
         backgroundSize: "cover",
         height: 500,
+        marginTop: 50,
       }}
     >
       <Typography variant="h6" align="center" paddingBottom={2}>

@@ -24,3 +24,23 @@ body {
   backdrop-filter: blur(21px);
   margin-top: 20px;
 }
+
+.text-area {
+  border: 1px solid gray;
+  padding: 4px;
+}
+
+textarea:focus {
+  border: 2px solid #eda55c;
+  outline: none;
+}
+
+input[type="date"] {
+  border: 1px solid gray;
+  padding: 4px;
+  border-radius: 4px;
+}
+input[type="date"]:focus {
+  border: 2px solid #eda55c;
+  outline: none;
+}

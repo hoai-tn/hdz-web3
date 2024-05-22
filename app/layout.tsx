@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
 import { Slackey } from "next/font/google";
 import Navbar from "./components/Navbar";
-import "./globals.css";
 import Providers from "./Providers";
-import Header from "./components/Header";
 import Footer from "./components/Footer";
 import { Web3Modal } from "./context/web3modal";
+import "./globals.css";
 
 const inter = Slackey({ weight: "400", subsets: ["latin"] });
 

@@ -24,7 +24,10 @@ body {
   backdrop-filter: blur(21px);
   margin-top: 20px;
 }
-
+input {
+  border: 1px solid #eda55c;
+  
+}
 .text-area {
   border: 1px solid gray;
   padding: 4px;

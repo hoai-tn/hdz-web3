@@ -36,7 +36,7 @@ const pages = [
   { href: "#tokenomics", name: "Tokenomics" },
   { href: "staking", name: "Staking" },
   { href: "nft", name: "NFT" },
-  { href: "crowdfunding", name: "CrowdFunding" },
+  { href: "campaign", name: "CrowdFunding" },
   { href: "#FAQ", name: "FAQ" },
 ];
 

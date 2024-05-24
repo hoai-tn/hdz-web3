@@ -13,7 +13,7 @@ export default function Page({ params }: { params: { id: string } }) {
         </Grid>
         <Grid
           item
-          xs={6}
+          xs={12}
           md={4}
           gap={2}
           sx={{ display: "flex", flexDirection: "column" }}
@@ -25,9 +25,8 @@ export default function Page({ params }: { params: { id: string } }) {
             ofLizards are a widespread group of
           </Typography>
           <Box>Creator: 0x213123123123123</Box>
-
-          <Box>Start Date</Box>
-          <Box>End Date</Box>
+          <Box>Start Date: 20-01-2024</Box>
+          <Box>End Date: 20-01-2024</Box>
           <Box>Goal: 1 ETH</Box>
           <Box>Pledge Total: 20 ETH</Box>
           <Box>Pledge Member: 30</Box>

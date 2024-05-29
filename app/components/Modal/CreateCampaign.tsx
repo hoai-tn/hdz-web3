@@ -31,6 +31,7 @@ export default function CreateCampaignModal({
         fullWidth
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
+        style={{ zIndex: 900 }}
       >
         <DialogTitle id="alert-dialog-title">{"Create Campaign"}</DialogTitle>
         <Box sx={{ px: 3, display: "flex", flexDirection: "column", gap: 2 }}>

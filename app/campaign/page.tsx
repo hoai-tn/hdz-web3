@@ -2,12 +2,12 @@
 import { Box, Button, Container, Typography } from "@mui/material";
 import React from "react";
 
-import CrowdFundingList from "@/app/components/CrowdFundingList";
+import CrowdFundingList from "@/app/components/CampaignList";
 import CreateCampaignModal from "../components/Modal/CreateCampaign";
 import CrowdFundingContract from "@/app/contracts/CrowdFundingContract";
 import { BrowserProvider, ethers } from "ethers";
-import { RPC_TESTNET } from "../contracts/utils/common";
 import { useWeb3Modal, useWeb3ModalProvider } from "@web3modal/ethers/react";
+import { ICampaign } from "../types/crowdFunding";
 const CrowdFunding = () => {
   const { walletProvider } = useWeb3ModalProvider();
   const { open: openConnectWallet } = useWeb3Modal();
@@ -18,7 +18,7 @@ const CrowdFunding = () => {
     setOpen(true);
   };
 
-  const handleCreateCampaign = async (campaign) => {
+  const handleCreateCampaign = async (campaign: ICampaign) => {
     if (!walletProvider) {
       openConnectWallet();
       return;
@@ -26,21 +26,12 @@ const CrowdFunding = () => {
     const provider = await new BrowserProvider(walletProvider).getSigner();
     const contract = new CrowdFundingContract(provider);
 
-    const startDateTimestamp = new Date(campaign.startDate).getTime() / 1000;
-    const endDateTimestamp = new Date(campaign.endDate).getTime() / 1000;
-
-    await contract.createCampaign({
-      ...campaign,
-      goal: contract._numberToEth(campaign.goal),
-      startDate: startDateTimestamp,
-      endDate: endDateTimestamp,
-    });
+    await contract.createCampaign(campaign);
 
     setOpen(false);
   };
 
-  const handleClose = (e) => {
-    console.log({ e });
+  const handleClose = () => {
     setOpen(false);
   };
   return (

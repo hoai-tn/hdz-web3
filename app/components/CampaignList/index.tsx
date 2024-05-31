@@ -1,5 +1,5 @@
 import React from "react";
-import CrowdFundingCard from "../CrowdFundingCard";
+import CrowdFundingCard from "../CampaignCard";
 import { Box, Grid } from "@mui/material";
 const index = () => {
   return (

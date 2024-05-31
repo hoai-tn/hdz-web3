@@ -8,18 +8,25 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 
 import { Box, FormGroup, TextField, Typography } from "@mui/material";
+import { ICampaign } from "@/app/types/crowdFunding";
+
+interface ICreateCampaignModal {
+  open: boolean;
+  handleClose: (e: any) => void;
+  handleCreateCampaign: (campaign: ICampaign) => void;
+}
 
 export default function CreateCampaignModal({
   open,
   handleClose,
   handleCreateCampaign,
-}) {
-  const [campaign, setCampaign] = React.useState({
+}: ICreateCampaignModal) {
+  const [campaign, setCampaign] = React.useState<ICampaign>({
     title: "",
-    goal: "",
+    goal: BigInt(0),
     image: "",
-    startDate: "",
-    endDate: "",
+    startDate: 0,
+    endDate: 0,
     description: "",
   });
   return (
@@ -48,7 +55,7 @@ export default function CreateCampaignModal({
             label="Goal"
             fullWidth
             onChange={(e) => {
-              setCampaign({ ...campaign, goal: e.target.value });
+              setCampaign({ ...campaign, goal: BigInt(e.target.value) });
             }}
           />
           <TextField
@@ -66,7 +73,10 @@ export default function CreateCampaignModal({
               id="startDate"
               name="startDate"
               onChange={(e) => {
-                setCampaign({ ...campaign, startDate: e.target.value });
+                setCampaign({
+                  ...campaign,
+                  startDate: new Date(e.target.value).getTime() / 1000,
+                });
               }}
             ></input>
           </FormGroup>
@@ -77,7 +87,10 @@ export default function CreateCampaignModal({
               id="endDate"
               name="endDate"
               onChange={(e) => {
-                setCampaign({ ...campaign, endDate: e.target.value });
+                setCampaign({
+                  ...campaign,
+                  endDate: new Date(e.target.value).getTime() / 1000,
+                });
               }}
             />
           </FormGroup>

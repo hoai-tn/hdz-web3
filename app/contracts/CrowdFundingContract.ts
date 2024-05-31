@@ -1,3 +1,4 @@
+import { ICampaign } from "../types/crowdFunding";
 import { BaseInterface } from "./interfaces";
 import { ProviderType } from "./interfaces/BaseInterface";
 import { getCrowdFundingAbi } from "./utils/getAbis";
@@ -14,25 +15,42 @@ export default class CrowdFundingContract extends BaseInterface {
     image,
     startDate,
     endDate,
-  }) {
-    console.log({
-      title,
-      description,
-      goal,
-      image,
-      startDate,
-      endDate,
-    });
-    
-    const tx = await this._contract.launch(
-      title,
-      description,
-      image,
-      goal,
-      startDate,
-      endDate,
-      this._option
-    );
-    return this._handleTransactionResponse(tx);
+  }: ICampaign) {
+    try {
+      const tx = await this._contract.launch(
+        title,
+        description,
+        image,
+        goal,
+        startDate,
+        endDate,
+        this._option
+      );
+      return this._handleTransactionResponse(tx);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getCampaign(id: number) {
+    try {
+      const campaign = await this._contract.campaigns(id);
+      return campaign;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getAllCampaign() {
+    try {
+      const numberOfCampaign = await this._contract.count();
+      const campaigns = [];
+      for (let i = 0; i < numberOfCampaign; i++) {
+        campaigns.push(await this.getCampaign(i));
+      }
+      return campaigns;
+    } catch (error) {
+      throw error;
+    }
   }
 }

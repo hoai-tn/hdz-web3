@@ -1,6 +1,26 @@
+"use client"
+import CrowdFundingContract from "@/app/contracts/CrowdFundingContract";
+import { ICampaign } from "@/app/types/crowdFunding";
 import { Box, Container, Grid, Typography } from "@mui/material";
+import { useWeb3ModalProvider } from "@web3modal/ethers/react";
+import { BrowserProvider } from "ethers";
+import { useEffect, useState } from "react";
 
-export default function Page({ params }: { params: { id: string } }) {
+export default function Page({ params }: { params: { id: number } }) {
+  const { walletProvider } = useWeb3ModalProvider();
+  const [campaign, SetCampaign] = useState<ICampaign>();
+  useEffect(() => {
+    const getCampaign = async () => {
+      if (walletProvider) {
+        const provider = await new BrowserProvider(walletProvider).getSigner();
+        const contract = new CrowdFundingContract(provider);
+
+        const _campaign = await contract.getCampaign(params.id);
+        SetCampaign(_campaign);
+      }
+    };
+    getCampaign();
+  }, []);
   return (
     <Container maxWidth="lg" sx={{ mt: 15, mb: 4 }}>
       <Grid container spacing={2}>
@@ -20,9 +40,12 @@ export default function Page({ params }: { params: { id: string } }) {
         >
           <Typography>Title Lizard crypto {params.id}</Typography>
           <Typography variant="body2" color="text.secondary">
+            {JSON.stringify(campaign)}
             Lizards are a wide spread group ofLizards are a wides pread group
-            ofLizards are a wide spread group ofLizards are a wides pread group
-            ofLizards are a widespread group of
+            ofLizards are a widespread group of Lizards are a wide spread group
+            ofLizards are a wides pread group ofLizards are a wide spread group
+            ofLizards are a wides pread group ofLizards are a widespread group
+            of
           </Typography>
           <Box>Creator: 0x213123123123123</Box>
           <Box>Start Date: 20-01-2024</Box>

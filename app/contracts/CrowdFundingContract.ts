@@ -1,4 +1,4 @@
-import { ICampaign } from "../types/crowdFunding";
+import { ICampaign, ICreateCampaign } from "../types/crowdFunding";
 import { BaseInterface } from "./interfaces";
 import { ProviderType } from "./interfaces/BaseInterface";
 import { getCrowdFundingAbi } from "./utils/getAbis";
@@ -15,7 +15,7 @@ export default class CrowdFundingContract extends BaseInterface {
     image,
     startDate,
     endDate,
-  }: ICampaign) {
+  }: ICreateCampaign) {
     try {
       const tx = await this._contract.launch(
         title,

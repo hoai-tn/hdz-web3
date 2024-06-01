@@ -40,7 +40,7 @@ import { getHDZAbi } from "@/app/contracts/utils/getAbis";
 import { checkAmount, formatNumber, showTransactionHash } from "@/app/utils";
 import PresaleTime from "./PresaleTime";
 import { getCrowdSaleAddress } from "@/app/contracts/utils/getAddress";
-import { PUBLIC_CHAIN_ID, RPC_TESTNET } from "@/app/contracts/utils/common";
+import { PUBLIC_CHAIN_ID, RPC_TESTNET, getRPC } from "@/app/contracts/utils/common";
 import CrowdsaleContract from "@/app/contracts/CrowdsaleContract";
 import CrowdsaleProgressBar from "./CrowdsaleProgressBar";
 import Image from "next/image";
@@ -72,7 +72,7 @@ const PresaleCard = () => {
     getTokenBalance();
   });
   const getTokenBalance = async () => {
-    const provider = await new JsonRpcProvider(RPC_TESTNET);
+    const provider = await new JsonRpcProvider(getRPC());
     const hdzContract = new HDZContract(provider);
     const crowdSaleBalance = await hdzContract.balanceOf(getCrowdSaleAddress());
     setCrowdBalance(crowdSaleBalance);

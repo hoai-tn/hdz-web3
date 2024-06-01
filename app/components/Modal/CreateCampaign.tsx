@@ -8,12 +8,12 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 
 import { Box, FormGroup, TextField, Typography } from "@mui/material";
-import { ICampaign } from "@/app/types/crowdFunding";
+import { ICampaign, ICreateCampaign } from "@/app/types/crowdFunding";
 
 interface ICreateCampaignModal {
   open: boolean;
   handleClose: (e: any) => void;
-  handleCreateCampaign: (campaign: ICampaign) => void;
+  handleCreateCampaign: (campaign: ICreateCampaign) => void;
 }
 
 export default function CreateCampaignModal({
@@ -21,7 +21,7 @@ export default function CreateCampaignModal({
   handleClose,
   handleCreateCampaign,
 }: ICreateCampaignModal) {
-  const [campaign, setCampaign] = React.useState<ICampaign>({
+  const [campaign, setCampaign] = React.useState<ICreateCampaign>({
     title: "",
     goal: BigInt(0),
     image: "",

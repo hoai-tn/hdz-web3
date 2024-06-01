@@ -7,7 +7,7 @@ import CreateCampaignModal from "../components/Modal/CreateCampaign";
 import CrowdFundingContract from "@/app/contracts/CrowdFundingContract";
 import { BrowserProvider, ethers } from "ethers";
 import { useWeb3Modal, useWeb3ModalProvider } from "@web3modal/ethers/react";
-import { ICampaign } from "../types/crowdFunding";
+import { ICampaign, ICreateCampaign } from "../types/crowdFunding";
 const CrowdFunding = () => {
   const { walletProvider } = useWeb3ModalProvider();
   const { open: openConnectWallet } = useWeb3Modal();
@@ -18,7 +18,7 @@ const CrowdFunding = () => {
     setOpen(true);
   };
 
-  const handleCreateCampaign = async (campaign: ICampaign) => {
+  const handleCreateCampaign = async (campaign: ICreateCampaign) => {
     if (!walletProvider) {
       openConnectWallet();
       return;

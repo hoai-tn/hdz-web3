@@ -1,23 +1,35 @@
-"use client"
+"use client";
 import CrowdFundingContract from "@/app/contracts/CrowdFundingContract";
+import { getRPC } from "@/app/contracts/utils/common";
 import { ICampaign } from "@/app/types/crowdFunding";
+import { formatTimestampToDate } from "@/app/utils";
 import { Box, Container, Grid, Typography } from "@mui/material";
 import { useWeb3ModalProvider } from "@web3modal/ethers/react";
-import { BrowserProvider } from "ethers";
+import { BrowserProvider, JsonRpcProvider, ethers } from "ethers";
 import { useEffect, useState } from "react";
 
 export default function Page({ params }: { params: { id: number } }) {
-  const { walletProvider } = useWeb3ModalProvider();
   const [campaign, SetCampaign] = useState<ICampaign>();
   useEffect(() => {
     const getCampaign = async () => {
-      if (walletProvider) {
-        const provider = await new BrowserProvider(walletProvider).getSigner();
-        const contract = new CrowdFundingContract(provider);
+      const provider = new JsonRpcProvider(getRPC());
+      const contract = new CrowdFundingContract(provider);
 
-        const _campaign = await contract.getCampaign(params.id);
-        SetCampaign(_campaign);
-      }
+      const _campaign: ICampaign = await contract.getCampaign(params.id);
+      SetCampaign({
+        id: params.id,
+        creator: _campaign.creator,
+        title: _campaign.title,
+        description: _campaign.description,
+        goal: contract._toNumber(_campaign.goal),
+        pledged: contract._toNumber(_campaign.pledged),
+        image: _campaign.image,
+        startAt: formatTimestampToDate(_campaign.startAt),
+        endAt: new Date(Number(_campaign.endAt) * 1000).toISOString(),
+        claimed: _campaign.claimed,
+      });
+
+      console.log({ campaign });
     };
     getCampaign();
   }, []);
@@ -38,17 +50,13 @@ export default function Page({ params }: { params: { id: number } }) {
           gap={2}
           sx={{ display: "flex", flexDirection: "column" }}
         >
-          <Typography>Title Lizard crypto {params.id}</Typography>
+          <Typography>{campaign?.title}</Typography>
           <Typography variant="body2" color="text.secondary">
-            {JSON.stringify(campaign)}
-            Lizards are a wide spread group ofLizards are a wides pread group
-            ofLizards are a widespread group of Lizards are a wide spread group
-            ofLizards are a wides pread group ofLizards are a wide spread group
-            ofLizards are a wides pread group ofLizards are a widespread group
-            of
+            {campaign?.description}
           </Typography>
-          <Box>Creator: 0x213123123123123</Box>
-          <Box>Start Date: 20-01-2024</Box>
+          {JSON.stringify(campaign)}
+          <Box>Creator: {campaign?.creator}</Box>
+          <Box>Start Date: {campaign?.startAt} </Box>
           <Box>End Date: 20-01-2024</Box>
           <Box>Goal: 1 ETH</Box>
           <Box>Pledge Total: 20 ETH</Box>

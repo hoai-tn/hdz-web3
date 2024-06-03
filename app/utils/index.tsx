@@ -1,3 +1,5 @@
+import moment from "moment";
+
 export const showSortAddress = (address?: string): string => {
   return `${address?.substring(0, 4)}...${address?.substring(
     address.length - 4,
@@ -28,3 +30,7 @@ export function showShortDescription(text: string, wordLimit: number): string {
   }
   return text;
 }
+
+export const formatTimestampToDate = (timeStamp: number): string => {
+  return moment(timeStamp * 100).format("MM-DD-YYYY");
+};

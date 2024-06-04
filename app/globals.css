@@ -26,7 +26,6 @@ body {
 }
 input {
   border: 1px solid #eda55c;
-  
 }
 .text-area {
   border: 1px solid gray;
@@ -46,4 +45,17 @@ input[type="date"] {
 input[type="date"]:focus {
   border: 2px solid #eda55c;
   outline: none;
+}
+
+.cover-image-container {
+  width: 100%;
+  height: 400px; /* Adjust as needed */
+  overflow: hidden;
+  position: relative;
+}
+
+.cover-image {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover;
 }

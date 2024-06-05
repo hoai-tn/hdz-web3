@@ -1,3 +1,4 @@
+import { parseUnits } from "ethers";
 import { ICampaign, ICreateCampaign } from "../types/crowdFunding";
 import { BaseInterface } from "./interfaces";
 import { ProviderType } from "./interfaces/BaseInterface";
@@ -49,6 +50,14 @@ export default class CrowdFundingContract extends BaseInterface {
         campaigns.push(await this.getCampaign(i));
       }
       return campaigns;
+    } catch (error) {
+      throw error;
+    }
+  }
+  async pledge(campaign, amount) {
+    try {
+      const tx = await this._contract.pledge(campaign, parseUnits(amount.toString(), 18), this._option);
+      return this._handleTransactionResponse(tx);
     } catch (error) {
       throw error;
     }

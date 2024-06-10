@@ -14,7 +14,8 @@ import {
 } from "@mui/material";
 import { useWeb3ModalProvider } from "@web3modal/ethers/react";
 import { BrowserProvider, JsonRpcProvider, ethers } from "ethers";
-import { useEffect, useState } from "react";
+import moment from "moment";
+import { useEffect, useMemo, useState } from "react";
 
 export default function Page({ params }: { params: { id: number } }) {
   const [campaign, SetCampaign] = useState<ICampaign>();
@@ -48,6 +49,14 @@ export default function Page({ params }: { params: { id: number } }) {
     //   console.error("Error fetching campaign data:", error);
     // }
   }, [params.id]);
+
+  const isStarted = useMemo(() => {
+    if (campaign) {
+      return moment() >= moment(campaign.startAt);
+    }
+    return false;
+  }, [campaign]);
+
   return (
     <Container maxWidth="lg" sx={{ mt: 15, mb: 4 }}>
       {campaign?.creator ? (
@@ -65,8 +74,10 @@ export default function Page({ params }: { params: { id: number } }) {
             >
               {[
                 {
-                  label: "Days Left",
-                  value: 1,
+                  label: `${isStarted? 'Days Left': 'Days Start'} `,
+                  value: isStarted
+                    ? moment(campaign.endAt).diff(campaign.startAt, "days")
+                    : campaign.startAt,
                 },
                 {
                   label: "Goals",
@@ -107,8 +118,6 @@ export default function Page({ params }: { params: { id: number } }) {
                 random text random text random text random text random text
                 random text random text
               </Typography>
-              {/* <Box>Start Date: {campaign?.startAt.toString()} </Box>
-              <Box>End Date: {campaign?.endAt.toString()}</Box> */}
             </Grid>
             <Grid
               item

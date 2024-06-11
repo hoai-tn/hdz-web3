@@ -43,11 +43,7 @@ export default function Page({ params }: { params: { id: number } }) {
         console.log(error);
       }
     };
-    // try {
     getCampaign();
-    // } catch (error) {
-    //   console.error("Error fetching campaign data:", error);
-    // }
   }, [params.id]);
 
   const isStarted = useMemo(() => {

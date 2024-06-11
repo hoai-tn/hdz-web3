@@ -1,8 +1,7 @@
-const env = process.env;
 
-export const PUBLIC_CHAIN_ID = env.NEXT_PUBLIC_CHAIN_ID
-export const RPC_TESTNET = env.NEXT_PUBLIC_RPC_TESTNET
-export const RPC_MAINNET = env.NEXT_PUBLIC_RPC_TESTNET
+export const PUBLIC_CHAIN_ID = process.env?.NEXT_PUBLIC_CHAIN_ID
+export const RPC_TESTNET = process.env?.NEXT_PUBLIC_RPC_TESTNET
+export const RPC_MAINNET = process.env?.NEXT_PUBLIC_RPC_TESTNET
 
 export type AddressType = {
   11155111: string;
@@ -15,7 +14,7 @@ export enum CHAIN_ID {
 }
 
 export default function getChainIdFromEnv(): number {
-  if (!env) {
+  if (!process?.env) {
     return Number(PUBLIC_CHAIN_ID);
   }
   return CHAIN_ID.TESTNET;

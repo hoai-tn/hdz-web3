@@ -7,10 +7,11 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import LoadingButton from "@mui/lab/LoadingButton";
-import { CircularProgress } from "@mui/material";
+import SaveIcon from "@mui/icons-material/Save";
+
 interface IConfirmModal {
   open: boolean;
-  pledgeAmount: Number;
+  pledgeAmount: number;
   isLoading: boolean;
   handleClose: (e: any) => void;
   handleConfirm: () => void;
@@ -40,13 +41,16 @@ export default function ConfirmModal({
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleConfirm}> 
-          <CircularProgress disableShrink />
-          Submit</Button>
-          <LoadingButton loading loadingPosition="start" variant="outlined" onClick={handleClose}>
-            Save
+          <LoadingButton
+            onClick={handleConfirm}
+            loading={isLoading}
+            loadingPosition="start"
+            startIcon={isLoading ? <SaveIcon /> : ""}
+            variant="contained"
+          >
+            Submit
           </LoadingButton>
-          <Button onClick={handleClose} autoFocus>
+          <Button onClick={handleClose} variant="outlined">
             Cancel
           </Button>
         </DialogActions>

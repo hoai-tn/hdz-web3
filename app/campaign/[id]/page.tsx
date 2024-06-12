@@ -70,10 +70,10 @@ export default function Page({ params }: { params: { id: number } }) {
             >
               {[
                 {
-                  label: `${isStarted? 'Days Left': 'Days Start'} `,
+                  label: `${isStarted ? "Days Left" : "Days Start"} `,
                   value: isStarted
                     ? moment(campaign.endAt).diff(campaign.startAt, "days")
-                    : campaign.startAt,
+                    : moment(campaign.startAt).format("MM-DD-YYYY"),
                 },
                 {
                   label: "Goals",

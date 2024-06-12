@@ -31,6 +31,6 @@ export function showShortDescription(text: string, wordLimit: number): string {
   return text;
 }
 
-export const formatTimestampToDate = (timestamp: number): string => {
-  return moment.unix(timestamp).format("MM-DD-YYYY");
+export const formatTimestampToDate = (timestamp: number): Date => {
+  return moment.unix(timestamp).toDate();
 };

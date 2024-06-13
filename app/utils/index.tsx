@@ -1,4 +1,5 @@
 import moment from "moment";
+import { CampaignState, ICampaign } from "../types/crowdFunding";
 
 export const showSortAddress = (address?: string): string => {
   return `${address?.substring(0, 4)}...${address?.substring(
@@ -33,4 +34,18 @@ export function showShortDescription(text: string, wordLimit: number): string {
 
 export const formatTimestampToDate = (timestamp: number): Date => {
   return moment.unix(timestamp).toDate();
+};
+
+
+export const handleCampaignState = (campaign: ICampaign) => {
+  if (
+    moment() >= moment(campaign.startAt) &&
+    moment() < moment(campaign.endAt)
+  ) {
+    return CampaignState.Started;
+  } else if (moment() > moment(campaign.endAt)) {
+    return CampaignState.Ended;
+  } else {
+    return CampaignState.NotStart;
+  }
 };

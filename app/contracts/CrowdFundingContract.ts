@@ -22,7 +22,7 @@ export default class CrowdFundingContract extends BaseInterface {
         title,
         description,
         image,
-        goal,
+        parseUnits(goal.toString(), 18),
         startDate,
         endDate,
         this._option
@@ -42,14 +42,22 @@ export default class CrowdFundingContract extends BaseInterface {
     }
   }
 
-  async getAllCampaign() {
+  async getAllCampaign(): Promise<ICampaign[]> {
     try {
       const numberOfCampaign = await this._contract.count();
       const campaigns = [];
-      for (let i = 0; i < numberOfCampaign; i++) {
-        campaigns.push(await this.getCampaign(i));
+      for (let id = 1; id <= numberOfCampaign; id++) {
+        campaigns.push(await this.getCampaign(id));
       }
       return campaigns;
+    } catch (error) {
+      throw error;
+    }
+  }
+  async getPledgedAmount(campaign: number, userAddress: string) {
+    try {
+      const amount = await this._contract.pledgedAmount(campaign, userAddress);
+      return this._toNumber(amount);
     } catch (error) {
       throw error;
     }

@@ -15,9 +15,15 @@ export interface ICampaign {
 
 export interface ICreateCampaign {
   title: string;
-  goal: bigint;
+  goal: number;
   image: string;
   startDate: number;
   endDate: number;
   description: string;
+}
+export enum CampaignState {
+  None,
+  NotStart,
+  Started,
+  Ended,
 }

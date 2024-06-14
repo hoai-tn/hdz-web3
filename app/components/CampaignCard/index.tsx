@@ -8,30 +8,31 @@ import Typography from "@mui/material/Typography";
 import { showShortDescription, showSortAddress } from "@/app/utils";
 import { Box } from "@mui/material";
 import Link from "next/link";
+import { ICampaign } from "@/app/types/crowdFunding";
 
-const index = () => {
+const index = ({ campaign }: { campaign: ICampaign }) => {
   const text = `Lizards are a widespread group of squamate reptiles, with over 6,000
     species, ranging across all continents except Antarctica`;
   return (
-    <Link href="/campaign/1">
-      <Card>
+    <Link href={`/campaign/${campaign.id}`}>
+      <Card sx={{ height: 400 }}>
         <CardMedia
-          sx={{ height: 140 }}
-          image="https://mui.com/static/images/cards/contemplative-reptile.jpg"
+          sx={{ height: 142 }}
+          image={campaign.image}
           title="green iguana"
         />
         <CardContent>
           <Typography gutterBottom variant="h5" component="div">
-            Lizard
+            {campaign.title}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            {showShortDescription(text, 6)}
+            {showShortDescription(campaign.description, 3)}
           </Typography>
           <Box display="flex" justifyContent="space-between" marginTop={2}>
             <Box>
-              <Typography>20 ETH</Typography>
+              <Typography>{campaign.pledged} CTC</Typography>
               <Typography variant="body2" color="text.secondary">
-                Raised of 10 ETH
+                Raised of {campaign.goal} CTC
               </Typography>
             </Box>
             <Box>
@@ -47,7 +48,7 @@ const index = () => {
               <Typography>Not started</Typography>
             </Box>
             <Typography variant="body2">
-              By {showSortAddress("0xb123asdasd12344as123")}
+              By {showSortAddress(campaign.creator)}
             </Typography>
           </Box>
         </CardContent>

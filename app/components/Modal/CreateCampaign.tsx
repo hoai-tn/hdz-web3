@@ -23,7 +23,7 @@ export default function CreateCampaignModal({
 }: ICreateCampaignModal) {
   const [campaign, setCampaign] = React.useState<ICreateCampaign>({
     title: "",
-    goal: BigInt(0),
+    goal: 0,
     image: "",
     startDate: 0,
     endDate: 0,
@@ -55,7 +55,7 @@ export default function CreateCampaignModal({
             label="Goal"
             fullWidth
             onChange={(e) => {
-              setCampaign({ ...campaign, goal: BigInt(e.target.value) });
+              setCampaign({ ...campaign, goal: Number(e.target.value) });
             }}
           />
           <TextField

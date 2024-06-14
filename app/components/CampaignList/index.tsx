@@ -1,19 +1,19 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import CrowdFundingCard from "../CampaignCard";
-import { Box, Grid } from "@mui/material";
-const index = () => {
+import { Grid } from "@mui/material";
+import { ICampaign } from "@/app/types/crowdFunding";
+const index = ({ campaigns }: { campaigns: ICampaign[] }) => {
   return (
-    <Grid
-      container
-      spacing={{ xs: 2, md: 3 }}
-    >
-      {[1, 2, 3, 4, 5,3,4,3,123,123,123,123,123,1231].map((element, index) => {
-        return (
-          <Grid key={index} item  xs={12} sm={6} md={3}>
-              <CrowdFundingCard />
-          </Grid>
-        );
-      })}
+    <Grid container spacing={{ xs: 2, md: 3 }}>
+      {campaigns.length
+        ? campaigns.map((campaign, index) => {
+            return (
+              <Grid key={index} item xs={12} sm={6} md={3}>
+                <CrowdFundingCard campaign={campaign} />
+              </Grid>
+            );
+          })
+        : "loading"}
     </Grid>
   );
 };

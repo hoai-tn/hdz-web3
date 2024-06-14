@@ -10,7 +10,13 @@ import {
 } from "@web3modal/ethers/react";
 import HDZContract from "@/app/contracts/HDZContract";
 
-const PledgeForm = ({ campaign }: { campaign: number }) => {
+const PledgeForm = ({
+  campaign,
+  handleAmountPledge,
+}: {
+  campaign: number;
+  handleAmountPledge: (amount: number) => void;
+}) => {
   const [openConfirmModal, setOpenConfirmModal] = useState(false);
   const [pledgeAmount, setPledgeAmount] = useState(0);
   const [notificationModal, setNotificationModal] = useState(false);
@@ -43,7 +49,7 @@ const PledgeForm = ({ campaign }: { campaign: number }) => {
       }
 
       await crowdFundingContract.pledge(campaign, pledgeAmount);
-
+      handleAmountPledge(pledgeAmount);
       setNotificationModal(true);
       setOpenConfirmModal(false);
     } catch (error) {

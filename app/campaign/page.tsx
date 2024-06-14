@@ -1,18 +1,45 @@
 "use client";
 import { Box, Button, Container, Typography } from "@mui/material";
-import React from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
 import CrowdFundingList from "@/app/components/CampaignList";
 import CreateCampaignModal from "../components/Modal/CreateCampaign";
 import CrowdFundingContract from "@/app/contracts/CrowdFundingContract";
-import { BrowserProvider, ethers } from "ethers";
+import { BrowserProvider, JsonRpcProvider, ethers } from "ethers";
 import { useWeb3Modal, useWeb3ModalProvider } from "@web3modal/ethers/react";
 import { ICampaign, ICreateCampaign } from "../types/crowdFunding";
+import { getRPC } from "../contracts/utils/common";
+import { formatTimestampToDate } from "../utils";
 const CrowdFunding = () => {
   const { walletProvider } = useWeb3ModalProvider();
   const { open: openConnectWallet } = useWeb3Modal();
 
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
+  const [campaigns, setCampaigns] = useState<ICampaign[]>([]);
+  useEffect(() => {
+    getCampaigns();
+  }, []);
+
+  const getCampaigns = useCallback(async () => {
+    const provider = new JsonRpcProvider(getRPC());
+    const contract = new CrowdFundingContract(provider);
+    let getAllCampaigns: ICampaign[] = await contract.getAllCampaign();
+    getAllCampaigns = getAllCampaigns.map((campaign: ICampaign, id: number) => {
+      return {
+        id: id + 1,
+        creator: campaign.creator,
+        title: campaign.title,
+        goal: contract._toNumber(campaign.goal),
+        pledged: contract._toNumber(campaign.pledged),
+        image: campaign.image,
+        startAt: formatTimestampToDate(Number(campaign.startAt)),
+        endAt: formatTimestampToDate(Number(campaign.endAt)),
+        description: campaign.description,
+        claimed: campaign.claimed,
+      };
+    });
+    setCampaigns(getAllCampaigns);
+  }, []);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -28,6 +55,7 @@ const CrowdFunding = () => {
 
     await contract.createCampaign(campaign);
 
+    await getCampaigns();
     setOpen(false);
   };
 
@@ -43,12 +71,12 @@ const CrowdFunding = () => {
           alignItems="center"
           sx={{ my: 2 }}
         >
-          <Typography>All Campaigns (2)</Typography>
+          <Typography>All Campaigns ({campaigns.length})</Typography>
           <Button variant="contained" color="primary" onClick={handleClickOpen}>
             Create Campaign
           </Button>
         </Box>
-        <CrowdFundingList />
+        <CrowdFundingList campaigns={campaigns} />
         <CreateCampaignModal
           open={open}
           handleClose={handleClose}

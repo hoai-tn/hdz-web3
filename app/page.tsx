@@ -7,13 +7,23 @@ import Tokenomics from "./components/Tokenomics";
 import FAQ from "./components/FAQ";
 import Image from "next/image";
 import Header from "./components/Header";
+import { useAppDispatch, useAppSelector } from "@/lib/hooks";
+import { decrement, increment } from "@/lib/features/counterSlice";
 const Home = () => {
+  const counter = useAppSelector((state) => state.counterProducer);
+  const dispatch = useAppDispatch();
+
   return (
     <div>
-      <Header/>
+      <Header />
       <About />
       <Tokenomics />
       <Container maxWidth="md">
+        <div>
+          troll troll {counter.value}
+          <Button onClick={() => dispatch(increment())}>plus</Button>
+          <Button onClick={() => dispatch(decrement())}>sub</Button>
+        </div>
         <Image
           className="mx-auto scale-y-[-1]"
           src="/img/paws.png"

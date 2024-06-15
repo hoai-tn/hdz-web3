@@ -5,6 +5,7 @@ import Providers from "./Providers";
 import Footer from "./components/Footer";
 import { Web3Modal } from "./context/web3modal";
 import "./globals.css";
+import StoreProvider from "./StoreProvider";
 
 const inter = Slackey({ weight: "400", subsets: ["latin"] });
 
@@ -21,15 +22,17 @@ export default function RootLayout({
   return (
     <html lang="en" style={{ scrollBehavior: "smooth" }}>
       <body className={inter.className} suppressHydrationWarning={true}>
-        <Providers>
-          <Web3Modal>
-            <div>
-              <Navbar />
-              <div className="min-h-[18rem]">{children}</div>
-            </div>
-            <Footer />
-          </Web3Modal>
-        </Providers>
+        <StoreProvider>
+          <Providers>
+            <Web3Modal>
+              <div>
+                <Navbar />
+                <div className="min-h-[18rem]">{children}</div>
+              </div>
+              <Footer />
+            </Web3Modal>
+          </Providers>
+        </StoreProvider>
       </body>
     </html>
   );

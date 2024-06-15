@@ -215,7 +215,7 @@ const PresaleCard = () => {
         fontWeight={800}
         color="black"
       >
-        CTC launches on doge day! Last chance to buy!
+        CTC launches on CTC day! Last chance to buy!
       </Typography>
       <PresaleTime isLoading={isLoading} />
       <CrowdsaleProgressBar

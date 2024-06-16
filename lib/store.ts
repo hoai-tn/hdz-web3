@@ -1,10 +1,16 @@
 import { configureStore } from "@reduxjs/toolkit";
 import counterProducer from "./features/counterSlice";
+import campaignSlice from "./features/campaignSlice";
+import userSlice from "./features/userSlice";
 export const makeStore = () => {
   return configureStore({
     reducer: {
       counterProducer,
+      campaignSlice,
+      userSlice,
     },
+    middleware: (getDefaultMiddleware) =>
+      getDefaultMiddleware({ serializableCheck: false }),
   });
 };
 

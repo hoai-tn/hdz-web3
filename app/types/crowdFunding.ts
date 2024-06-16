@@ -10,7 +10,6 @@ export interface ICampaign {
   endAt: Date;
   description: string;
   claimed: boolean;
-  
 }
 
 export interface ICreateCampaign {

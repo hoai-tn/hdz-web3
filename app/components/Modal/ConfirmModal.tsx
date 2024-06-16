@@ -44,7 +44,6 @@ export default function ConfirmModal({
           <LoadingButton
             onClick={handleConfirm}
             loading={isLoading}
-            loadingPosition="start"
             startIcon={isLoading ? <SaveIcon /> : ""}
             variant="contained"
           >

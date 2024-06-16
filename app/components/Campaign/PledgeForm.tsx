@@ -9,20 +9,19 @@ import {
   useWeb3ModalProvider,
 } from "@web3modal/ethers/react";
 import HDZContract from "@/app/contracts/HDZContract";
+import { useAppDispatch, useAppSelector } from "@/lib/hooks";
+import { setCampaign } from "@/lib/features/campaignSlice";
 
-const PledgeForm = ({
-  campaign,
-  handleAmountPledge,
-}: {
-  campaign: number;
-  handleAmountPledge: (amount: number) => void;
-}) => {
+const PledgeForm = ({ isPledged }: { isPledged: boolean }) => {
   const [openConfirmModal, setOpenConfirmModal] = useState(false);
-  const [pledgeAmount, setPledgeAmount] = useState(0);
+  const [amount, setAmount] = useState(0);
   const [notificationModal, setNotificationModal] = useState(false);
   const [isSendingPledged, setIsSendingPledged] = useState(false);
-  const { open: openConnectWallet } = useWeb3Modal();
 
+  const dispatch = useAppDispatch();
+  const campaign = useAppSelector((state) => state.campaignSlice.campaign);
+
+  const { open: openConnectWallet } = useWeb3Modal();
   const { walletProvider } = useWeb3ModalProvider();
   const { address } = useWeb3ModalAccount();
 
@@ -41,15 +40,21 @@ const PledgeForm = ({
         crowdFundingContract._contractAddress
       );
 
-      if (allowanceAmount < pledgeAmount) {
+      if (allowanceAmount < amount) {
         await hdzContract.approve(
           crowdFundingContract._contractAddress,
-          pledgeAmount
+          amount
         );
       }
 
-      await crowdFundingContract.pledge(campaign, pledgeAmount);
-      handleAmountPledge(pledgeAmount);
+      await crowdFundingContract.pledge(campaign.id, amount);
+
+      dispatch(
+        setCampaign({
+          ...campaign,
+          pledged: campaign.pledged + amount,
+        })
+      );
       setNotificationModal(true);
       setOpenConfirmModal(false);
     } catch (error) {
@@ -71,7 +76,10 @@ const PledgeForm = ({
   };
   return (
     <Box>
-      <Typography>Pledge to the campaign</Typography>
+      <Typography>
+        {" "}
+        {isPledged ? "Pledge" : "Unpledged"} to the campaign
+      </Typography>
       <TextField
         id="outlined-uncontrolled"
         label="Amount"
@@ -79,22 +87,39 @@ const PledgeForm = ({
         fullWidth
         sx={{ my: 2 }}
         onChange={(e) => {
-          setPledgeAmount(Number(e.target.value));
+          setAmount(Number(e.target.value));
         }}
       />
-      <Box
-        bgcolor="#48664d"
-        px={2}
-        py={1}
-        my={2}
-        borderRadius={4}
-        color="white"
-      >
-        <Typography>Back it because you believe in it</Typography>
-        <Typography>
-          Support the project for no reward, just because it speaks to you
-        </Typography>
-      </Box>
+      {isPledged ? (
+        <Box
+          bgcolor="#48664d"
+          px={2}
+          py={1}
+          my={2}
+          borderRadius={4}
+          color="white"
+        >
+          <Typography>Back it because you believe in it</Typography>
+          <Typography>
+            Support the project for no reward, just because it speaks to you
+          </Typography>
+        </Box>
+      ) : (
+        <Box
+          bgcolor="#48664d"
+          px={2}
+          py={1}
+          my={2}
+          borderRadius={4}
+          color="white"
+        >
+          <Typography>Your pledged amount is 1000</Typography>
+          {/* <Typography>
+            It seems you haven{"'"}t pledged anything yet. Please pledge an
+            amount before attempting to unpledge.
+          </Typography> */}
+        </Box>
+      )}
       {walletProvider ? (
         <Button
           variant="contained"
@@ -102,7 +127,7 @@ const PledgeForm = ({
           fullWidth
           onClick={() => setOpenConfirmModal(true)}
         >
-          Pledge
+          {isPledged ? "Pledge" : "Unpledged"}
         </Button>
       ) : (
         <Button
@@ -118,7 +143,7 @@ const PledgeForm = ({
       <ConfirmModal
         open={openConfirmModal}
         isLoading={isSendingPledged}
-        pledgeAmount={pledgeAmount}
+        pledgeAmount={amount}
         handleClose={() => setOpenConfirmModal(false)}
         handleConfirm={handleConfirm}
       />
@@ -127,7 +152,7 @@ const PledgeForm = ({
         anchorOrigin={{ vertical: "top", horizontal: "right" }}
         autoHideDuration={5000}
         onClose={handleClose}
-        message={`Pledged ${pledgeAmount} HDZ to this campaign successfully!`}
+        message={`Pledged ${amount} HDZ to this campaign successfully!`}
       />
     </Box>
   );

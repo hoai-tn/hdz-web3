@@ -1,7 +1,14 @@
 "use client";
 
-import { createWeb3Modal, defaultConfig } from "@web3modal/ethers/react";
-import { ReactNode } from "react";
+import { setUser } from "@/lib/features/userSlice";
+import { useAppDispatch } from "@/lib/hooks";
+import {
+  createWeb3Modal,
+  defaultConfig,
+  useWeb3ModalAccount,
+  useWeb3ModalProvider,
+} from "@web3modal/ethers/react";
+import { ReactNode, useEffect } from "react";
 
 // 1. Get projectId at https://cloud.walletconnect.com
 const projectId = "a190c2407e22a8177a28cfa28283ad16";
@@ -56,5 +63,22 @@ createWeb3Modal({
 });
 
 export function Web3Modal({ children }: { children: ReactNode }) {
+  const { isConnected, address } = useWeb3ModalAccount();
+  const { walletProvider } = useWeb3ModalProvider();
+
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    if (address && walletProvider) {
+      dispatch(
+        setUser({
+          address,
+          walletProvider,
+          pledgedAmount: 0,
+        })
+      );
+    }
+  }, [address, walletProvider]);
+
   return children;
 }

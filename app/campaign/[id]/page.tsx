@@ -1,17 +1,13 @@
 "use client";
 import PledgeForm from "@/app/components/Campaign/PledgeForm";
+import PledgedTabs from "@/app/components/Campaign/PledgedTabs";
 import CrowdFundingContract from "@/app/contracts/CrowdFundingContract";
 import { getRPC } from "@/app/contracts/utils/common";
 import { CampaignState, ICampaign } from "@/app/types/crowdFunding";
 import { formatTimestampToDate, handleCampaignState } from "@/app/utils";
-import {
-  Box,
-  Button,
-  Container,
-  Grid,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { setCampaign } from "@/lib/features/campaignSlice";
+import { useAppDispatch, useAppSelector } from "@/lib/hooks";
+import { Box, Container, Grid, Typography } from "@mui/material";
 import {
   useWeb3ModalAccount,
   useWeb3ModalProvider,
@@ -21,14 +17,18 @@ import moment from "moment";
 import { useEffect, useMemo, useState } from "react";
 
 export default function Page({ params }: { params: { id: number } }) {
-  const [campaign, SetCampaign] = useState<ICampaign>();
+  // const [_campaign, SetCampaign] = useState<ICampaixgn>();
   const [campaignState, setCampaignState] = useState<CampaignState>(
     CampaignState.None
   );
   const [user, setUser] = useState({ pledged: 0 });
-
+  const [isLoading, setIsLoading] = useState(true);
   const { walletProvider } = useWeb3ModalProvider();
   const { address } = useWeb3ModalAccount();
+
+  const dispatch = useAppDispatch();
+  const campaign = useAppSelector((state) => state.campaignSlice.campaign);
+
   useEffect(() => {
     const getCampaign = async () => {
       try {
@@ -36,18 +36,21 @@ export default function Page({ params }: { params: { id: number } }) {
         const contract = new CrowdFundingContract(provider);
 
         const _campaign: ICampaign = await contract.getCampaign(params.id);
-        SetCampaign({
-          id: params.id,
-          creator: _campaign.creator,
-          title: _campaign.title,
-          description: _campaign.description,
-          goal: contract._toNumber(_campaign.goal),
-          pledged: contract._toNumber(_campaign.pledged),
-          image: _campaign.image,
-          startAt: formatTimestampToDate(Number(_campaign.startAt)),
-          endAt: formatTimestampToDate(Number(_campaign.endAt)),
-          claimed: _campaign.claimed,
-        });
+        dispatch(
+          setCampaign({
+            id: params.id,
+            creator: _campaign.creator,
+            title: _campaign.title,
+            description: _campaign.description,
+            goal: contract._toNumber(_campaign.goal),
+            pledged: contract._toNumber(_campaign.pledged),
+            image: _campaign.image,
+            startAt: formatTimestampToDate(Number(_campaign.startAt)),
+            endAt: formatTimestampToDate(Number(_campaign.endAt)),
+            claimed: _campaign.claimed,
+          })
+        );
+        setIsLoading(false);
       } catch (error) {
         console.log(error);
       }
@@ -102,7 +105,7 @@ export default function Page({ params }: { params: { id: number } }) {
   }, [campaign]);
   return (
     <Container maxWidth="lg" sx={{ mt: 15, mb: 4 }}>
-      {campaign?.creator ? (
+      {!isLoading && campaign ? (
         <Box>
           <div className="cover-image-container">
             <img src={campaign.image} alt="img" className="cover-image" />
@@ -170,22 +173,7 @@ export default function Page({ params }: { params: { id: number } }) {
               px={3}
               py={2}
             >
-              <PledgeForm
-                campaign={params.id}
-                handleAmountPledge={(amount) => {
-                  SetCampaign((prev) => {
-                    if (prev)
-                      return {
-                        ...prev,
-                        pledged: prev?.pledged + amount,
-                      };
-                  });
-                  setUser((prev) => ({
-                    ...prev,
-                    pledged: prev?.pledged + amount,
-                  }));
-                }}
-              />
+              <PledgedTabs />
             </Grid>
           </Grid>
         </Box>

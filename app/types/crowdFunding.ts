@@ -28,9 +28,8 @@ export enum CampaignState {
 }
 
 export enum CampaignActionState {
-  None,
-  Pledged,
-  UnPledged,
-  Refund,
-  Claimed,
+  Pledged = "Pledged",
+  UnPledged = "UnPledged",
+  Refund = "Refund",
+  Claimed = "Claimed",
 }

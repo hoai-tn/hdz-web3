@@ -5,11 +5,15 @@ import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
 import PledgeForm from "./PledgeForm";
+import { CampaignActionState } from "@/app/types/crowdFunding";
 
 export default function PledgedTabs() {
-  const [value, setValue] = React.useState("1");
+  const [value, setValue] = React.useState(CampaignActionState.Pledged);
 
-  const handleChange = (event: React.SyntheticEvent, newValue: string) => {
+  const handleChange = (
+    event: React.SyntheticEvent,
+    newValue: CampaignActionState
+  ) => {
     setValue(newValue);
   };
 
@@ -18,15 +22,17 @@ export default function PledgedTabs() {
       <TabContext value={value}>
         <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
           <TabList onChange={handleChange} aria-label="lab API tabs example">
-            <Tab label="Pledge" value="1" />
-            <Tab label="UnPledge" value="2" />
+            <Tab label="Pledge" value={CampaignActionState.Pledged} />
+            <Tab label="UnPledge" value={CampaignActionState.UnPledged} />
+            <Tab label="Claim" value={CampaignActionState.Claimed} />
+            <Tab label="Refund" value={CampaignActionState.Refund} />
           </TabList>
         </Box>
-        <TabPanel value="1">
-          <PledgeForm isPledged={true}/>
+        <TabPanel value={CampaignActionState.Pledged}>
+          <PledgeForm actionState={CampaignActionState.Pledged} />
         </TabPanel>
-        <TabPanel value="2">
-          <PledgeForm isPledged={false}/>
+        <TabPanel value={CampaignActionState.UnPledged}>
+          <PledgeForm actionState={CampaignActionState.UnPledged} />
         </TabPanel>
       </TabContext>
     </Box>

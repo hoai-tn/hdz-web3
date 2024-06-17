@@ -63,7 +63,7 @@ createWeb3Modal({
 });
 
 export function Web3Modal({ children }: { children: ReactNode }) {
-  const { isConnected, address } = useWeb3ModalAccount();
+  const { address } = useWeb3ModalAccount();
   const { walletProvider } = useWeb3ModalProvider();
 
   const dispatch = useAppDispatch();
@@ -77,6 +77,12 @@ export function Web3Modal({ children }: { children: ReactNode }) {
           pledgedAmount: 0,
         })
       );
+    } else {
+      setUser({
+        address: null,
+        walletProvider: null,
+        pledgedAmount: 0,
+      });
     }
   }, [address, walletProvider]);
 

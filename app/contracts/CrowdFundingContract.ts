@@ -74,4 +74,16 @@ export default class CrowdFundingContract extends BaseInterface {
       throw error;
     }
   }
+  async unPledge(campaign: number, amount: number) {
+    try {
+      const tx = await this._contract.unPledge(
+        campaign,
+        parseUnits(amount.toString(), 18),
+        this._option
+      );
+      return this._handleTransactionResponse(tx);
+    } catch (error) {
+      throw error;
+    }
+  }
 }

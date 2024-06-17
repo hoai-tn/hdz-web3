@@ -6,6 +6,7 @@ import { getRPC } from "@/app/contracts/utils/common";
 import { CampaignState, ICampaign } from "@/app/types/crowdFunding";
 import { formatTimestampToDate, handleCampaignState } from "@/app/utils";
 import { setCampaign } from "@/lib/features/campaignSlice";
+import { setUser } from "@/lib/features/userSlice";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { Box, Container, Grid, Typography } from "@mui/material";
 import {
@@ -17,17 +18,17 @@ import moment from "moment";
 import { useEffect, useMemo, useState } from "react";
 
 export default function Page({ params }: { params: { id: number } }) {
-  // const [_campaign, SetCampaign] = useState<ICampaixgn>();
   const [campaignState, setCampaignState] = useState<CampaignState>(
     CampaignState.None
   );
-  const [user, setUser] = useState({ pledged: 0 });
   const [isLoading, setIsLoading] = useState(true);
+
   const { walletProvider } = useWeb3ModalProvider();
   const { address } = useWeb3ModalAccount();
 
   const dispatch = useAppDispatch();
   const campaign = useAppSelector((state) => state.campaignSlice.campaign);
+  const user = useAppSelector((state) => state.userSlice);
 
   useEffect(() => {
     const getCampaign = async () => {
@@ -36,6 +37,7 @@ export default function Page({ params }: { params: { id: number } }) {
         const contract = new CrowdFundingContract(provider);
 
         const _campaign: ICampaign = await contract.getCampaign(params.id);
+
         dispatch(
           setCampaign({
             id: params.id,
@@ -65,9 +67,12 @@ export default function Page({ params }: { params: { id: number } }) {
         const contract = new CrowdFundingContract(provider);
 
         const amount = await contract.getPledgedAmount(params.id, address);
-        setUser({ pledged: amount });
+
+        dispatch(setUser({ address, walletProvider, pledgedAmount: amount }));
       } else {
-        setUser({ pledged: 0 });
+        dispatch(
+          setUser({ address: null, walletProvider: null, pledgedAmount: 0 })
+        );
       }
     };
     getPledgeAmount();
@@ -132,7 +137,7 @@ export default function Page({ params }: { params: { id: number } }) {
               },
               {
                 label: "Your pledged",
-                value: user.pledged,
+                value: user.pledgedAmount,
               },
               {
                 label: "Total Backers",

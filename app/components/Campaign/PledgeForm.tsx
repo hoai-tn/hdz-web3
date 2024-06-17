@@ -3,27 +3,26 @@ import React, { useState } from "react";
 import ConfirmModal from "../Modal/ConfirmModal";
 import { BrowserProvider } from "ethers";
 import CrowdFundingContract from "@/app/contracts/CrowdFundingContract";
-import {
-  useWeb3Modal,
-  useWeb3ModalAccount,
-  useWeb3ModalProvider,
-} from "@web3modal/ethers/react";
+import { useWeb3Modal } from "@web3modal/ethers/react";
 import HDZContract from "@/app/contracts/HDZContract";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { setCampaign } from "@/lib/features/campaignSlice";
+import { CampaignActionState } from "@/app/types/crowdFunding";
+import { setUser } from "@/lib/features/userSlice";
 
-const PledgeForm = ({ isPledged }: { isPledged: boolean }) => {
+const PledgeForm = ({ actionState }: { actionState: CampaignActionState }) => {
   const [openConfirmModal, setOpenConfirmModal] = useState(false);
   const [amount, setAmount] = useState(0);
   const [notificationModal, setNotificationModal] = useState(false);
   const [isSendingPledged, setIsSendingPledged] = useState(false);
 
-  const dispatch = useAppDispatch();
   const campaign = useAppSelector((state) => state.campaignSlice.campaign);
+  const { walletProvider, address, pledgedAmount } = useAppSelector(
+    (state) => state.userSlice
+  );
+  const dispatch = useAppDispatch();
 
   const { open: openConnectWallet } = useWeb3Modal();
-  const { walletProvider } = useWeb3ModalProvider();
-  const { address } = useWeb3ModalAccount();
 
   const handleConfirm = async () => {
     try {
@@ -35,24 +34,43 @@ const PledgeForm = ({ isPledged }: { isPledged: boolean }) => {
       const provider = await new BrowserProvider(walletProvider).getSigner();
       const hdzContract = new HDZContract(provider);
       const crowdFundingContract = new CrowdFundingContract(provider);
-      const allowanceAmount = await hdzContract.allowance(
-        address,
-        crowdFundingContract._contractAddress
-      );
 
-      if (allowanceAmount < amount) {
-        await hdzContract.approve(
-          crowdFundingContract._contractAddress,
-          amount
+      if (actionState === CampaignActionState.Pledged) {
+        const allowanceAmount = await hdzContract.allowance(
+          address,
+          crowdFundingContract._contractAddress
         );
-      }
 
-      await crowdFundingContract.pledge(campaign.id, amount);
+        if (allowanceAmount < amount) {
+          await hdzContract.approve(
+            crowdFundingContract._contractAddress,
+            amount
+          );
+        }
+
+        await crowdFundingContract.pledge(campaign.id, amount);
+      } else if (actionState === CampaignActionState.UnPledged) {
+        await crowdFundingContract.unPledge(campaign.id, amount);
+      }
 
       dispatch(
         setCampaign({
           ...campaign,
-          pledged: campaign.pledged + amount,
+          pledged:
+            actionState === CampaignActionState.Pledged
+              ? campaign.pledged + amount
+              : campaign.pledged - amount,
+        })
+      );
+
+      dispatch(
+        setUser({
+          address,
+          walletProvider,
+          pledgedAmount:
+            actionState === CampaignActionState.Pledged
+              ? pledgedAmount + amount
+              : pledgedAmount - amount,
         })
       );
       setNotificationModal(true);
@@ -74,11 +92,15 @@ const PledgeForm = ({ isPledged }: { isPledged: boolean }) => {
 
     setNotificationModal(false);
   };
+
+  const allowUnpledged =
+    pledgedAmount > 0 && amount > 0 && amount <= pledgedAmount;
+
   return (
     <Box>
       <Typography>
-        {" "}
-        {isPledged ? "Pledge" : "Unpledged"} to the campaign
+        {actionState === CampaignActionState.Pledged ? "Pledge" : "Unpledged"}
+        to the campaign
       </Typography>
       <TextField
         id="outlined-uncontrolled"
@@ -90,7 +112,7 @@ const PledgeForm = ({ isPledged }: { isPledged: boolean }) => {
           setAmount(Number(e.target.value));
         }}
       />
-      {isPledged ? (
+      {actionState === CampaignActionState.Pledged ? (
         <Box
           bgcolor="#48664d"
           px={2}
@@ -113,11 +135,12 @@ const PledgeForm = ({ isPledged }: { isPledged: boolean }) => {
           borderRadius={4}
           color="white"
         >
-          <Typography>Your pledged amount is 1000</Typography>
-          {/* <Typography>
-            It seems you haven{"'"}t pledged anything yet. Please pledge an
-            amount before attempting to unpledge.
-          </Typography> */}
+          <Typography>Your pledged amount is {pledgedAmount}</Typography>
+          {pledgedAmount <= 0 && (
+            <Typography>
+              It seems you haven{"'"}t pledged anything yet.
+            </Typography>
+          )}
         </Box>
       )}
       {walletProvider ? (
@@ -126,8 +149,11 @@ const PledgeForm = ({ isPledged }: { isPledged: boolean }) => {
           color="primary"
           fullWidth
           onClick={() => setOpenConfirmModal(true)}
+          disabled={
+            actionState === CampaignActionState.UnPledged && !allowUnpledged
+          }
         >
-          {isPledged ? "Pledge" : "Unpledged"}
+          {actionState === CampaignActionState.Pledged ? "Pledge" : "Unpledged"}
         </Button>
       ) : (
         <Button
@@ -139,11 +165,16 @@ const PledgeForm = ({ isPledged }: { isPledged: boolean }) => {
           Connect Wallet
         </Button>
       )}
-
+      {actionState === CampaignActionState.UnPledged && !allowUnpledged && (
+        <Typography color="red" mt={2}>
+          The amount should be less than or to equal your pledged!
+        </Typography>
+      )}
       <ConfirmModal
         open={openConfirmModal}
         isLoading={isSendingPledged}
-        pledgeAmount={amount}
+        amount={amount}
+        actionState={actionState}
         handleClose={() => setOpenConfirmModal(false)}
         handleConfirm={handleConfirm}
       />

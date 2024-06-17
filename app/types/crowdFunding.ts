@@ -1,4 +1,4 @@
-import { formatNumber } from '@/app/utils';
+import { formatNumber } from "@/app/utils";
 export interface ICampaign {
   id: number;
   creator: string;
@@ -25,4 +25,12 @@ export enum CampaignState {
   NotStart,
   Started,
   Ended,
+}
+
+export enum CampaignActionState {
+  None,
+  Pledged,
+  UnPledged,
+  Refund,
+  Claimed,
 }

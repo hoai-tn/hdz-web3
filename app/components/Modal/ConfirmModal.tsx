@@ -8,13 +8,15 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import LoadingButton from "@mui/lab/LoadingButton";
 import SaveIcon from "@mui/icons-material/Save";
+import { CampaignActionState } from "@/app/types/crowdFunding";
 
 interface IConfirmModal {
   open: boolean;
-  pledgeAmount: number;
+  amount: number;
   isLoading: boolean;
   handleClose: (e: any) => void;
   handleConfirm: () => void;
+  actionState: CampaignActionState;
 }
 
 export default function ConfirmModal({
@@ -22,7 +24,8 @@ export default function ConfirmModal({
   handleClose,
   handleConfirm,
   isLoading,
-  pledgeAmount,
+  amount,
+  actionState,
 }: IConfirmModal) {
   return (
     <React.Fragment>
@@ -33,11 +36,18 @@ export default function ConfirmModal({
         style={{ zIndex: 900 }}
       >
         <DialogTitle id="alert-dialog-title">
-          Pledge {pledgeAmount} HDZ to Campaign
+          {actionState === CampaignActionState.UnPledged
+            ? "UnPledge"
+            : "Pledge"}{" "}
+          {amount} HDZ to Campaign
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            Are you sure you want to Pledge this campaign?
+            Are you sure you want to{" "}
+            {actionState === CampaignActionState.UnPledged
+              ? "UnPledge"
+              : "Pledge"}{" "}
+            this campaign?
           </DialogContentText>
         </DialogContent>
         <DialogActions>

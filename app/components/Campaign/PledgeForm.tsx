@@ -24,6 +24,10 @@ const PledgeForm = ({ actionState }: { actionState: CampaignActionState }) => {
 
   const { open: openConnectWallet } = useWeb3Modal();
 
+  const allowUnpledged =
+    pledgedAmount > 0 && amount > 0 && amount <= pledgedAmount;
+
+
   const handleConfirm = async () => {
     try {
       if (!walletProvider || !address) {
@@ -92,9 +96,6 @@ const PledgeForm = ({ actionState }: { actionState: CampaignActionState }) => {
 
     setNotificationModal(false);
   };
-
-  const allowUnpledged =
-    pledgedAmount > 0 && amount > 0 && amount <= pledgedAmount;
 
   return (
     <Box>

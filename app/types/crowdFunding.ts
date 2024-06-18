@@ -28,8 +28,15 @@ export enum CampaignState {
 }
 
 export enum CampaignActionState {
+  Pledged,
+  UnPledged,
+  Refund,
+  Claimed,
+  Cancel,
+}
+export enum CampaignTabState {
   Pledged = "Pledged",
   UnPledged = "UnPledged",
+  Creator = "CreatorCreator",
   Refund = "Refund",
-  Claimed = "Claimed",
 }

@@ -12,7 +12,7 @@ import { CampaignActionState } from "@/app/types/crowdFunding";
 
 interface IConfirmModal {
   open: boolean;
-  amount: number;
+  amount?: number;
   isLoading: boolean;
   handleClose: (e: any) => void;
   handleConfirm: () => void;

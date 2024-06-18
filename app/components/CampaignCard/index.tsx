@@ -45,7 +45,7 @@ const index = ({ campaign }: { campaign: ICampaign }) => {
           <Box display="flex" justifyContent="space-between" marginTop={2}>
             <Box display="flex" gap={1} alignItems="center">
               <Box bgcolor="red" width={10} height={10} borderRadius={50}></Box>
-              <Typography>Not started</Typography>
+              <Typography>Start</Typography>
             </Box>
             <Typography variant="body2">
               By {showSortAddress(campaign.creator)}

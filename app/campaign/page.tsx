@@ -9,7 +9,7 @@ import { BrowserProvider, JsonRpcProvider, ethers } from "ethers";
 import { useWeb3Modal, useWeb3ModalProvider } from "@web3modal/ethers/react";
 import { ICampaign, ICreateCampaign } from "../types/crowdFunding";
 import { getRPC } from "../contracts/utils/common";
-import { formatTimestampToDate } from "../utils";
+import { formatTimestampToDate, handleCampaignState } from "../utils";
 const CrowdFunding = () => {
   const { walletProvider } = useWeb3ModalProvider();
   const { open: openConnectWallet } = useWeb3Modal();
@@ -36,6 +36,7 @@ const CrowdFunding = () => {
         endAt: formatTimestampToDate(Number(campaign.endAt)),
         description: campaign.description,
         claimed: campaign.claimed,
+        state: handleCampaignState(campaign),
       };
     });
     setCampaigns(getAllCampaigns);

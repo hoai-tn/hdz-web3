@@ -1,9 +1,10 @@
-import { ICampaign } from "@/app/types/crowdFunding";
+import { CampaignState, ICampaign } from "@/app/types/crowdFunding";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
 interface ICampaignState {
   campaign: ICampaign;
+  campaignState: CampaignState;
 }
 const initialState = {
   campaign: {
@@ -18,6 +19,7 @@ const initialState = {
     description: "",
     claimed: false,
   },
+  campaignState: CampaignState.None,
 } satisfies ICampaignState as ICampaignState;
 
 const CampaignSlice = createSlice({
@@ -25,19 +27,13 @@ const CampaignSlice = createSlice({
   initialState,
   reducers: {
     setCampaign(state, { payload }) {
-      state.campaign = {...payload};
+      state.campaign = { ...payload };
     },
-    // increment(state) {
-    //   state.value++;
-    // },
-    // decrement(state) {
-    //   state.value--;
-    // },
-    // incrementByAmount(state, action: PayloadAction<number>) {
-    //   state.value += action.payload;
-    // },
+    setCampaignState(state, { payload }) {
+      state.campaignState = payload;
+    },
   },
 });
 
-export const { setCampaign } = CampaignSlice.actions;
+export const { setCampaign, setCampaignState } = CampaignSlice.actions;
 export default CampaignSlice.reducer;

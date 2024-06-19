@@ -37,20 +37,8 @@ export default function Page({ params }: { params: { id: number } }) {
 
         const _campaign: ICampaign = await contract.getCampaign(params.id);
 
-        dispatch(
-          setCampaign({
-            id: params.id,
-            creator: _campaign.creator,
-            title: _campaign.title,
-            description: _campaign.description,
-            goal: contract._toNumber(_campaign.goal),
-            pledged: contract._toNumber(_campaign.pledged),
-            image: _campaign.image,
-            startAt: formatTimestampToDate(Number(_campaign.startAt)),
-            endAt: formatTimestampToDate(Number(_campaign.endAt)),
-            claimed: _campaign.claimed,
-          })
-        );
+        dispatch(setCampaign({ ..._campaign }));
+        
         setIsLoading(false);
       } catch (error) {
         console.log(error);
@@ -110,7 +98,7 @@ export default function Page({ params }: { params: { id: number } }) {
   return (
     <Container maxWidth="lg" sx={{ mt: 15, mb: 4 }}>
       {!isLoading ? (
-        campaign.goal ? (
+        campaign?.goal ? (
           <Box>
             <div className="cover-image-container">
               <img src={campaign.image} alt="img" className="cover-image" />
@@ -184,8 +172,8 @@ export default function Page({ params }: { params: { id: number } }) {
           </Box>
         ) : (
           <Typography fontSize={20}>
-            Campaign <b>{params.id}</b> could not found, please back to crowdfunding
-            page.
+            Campaign <b>{params.id}</b> could not found, please back to
+            crowdfunding page.
           </Typography>
         )
       ) : (

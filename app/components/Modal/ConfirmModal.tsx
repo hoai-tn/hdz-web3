@@ -27,6 +27,22 @@ export default function ConfirmModal({
   amount,
   actionState,
 }: IConfirmModal) {
+  const title = React.useMemo(() => {
+    switch (actionState) {
+      case CampaignActionState.UnPledged:
+        return `UnPledge ${amount} HDZ from this Campaign`;
+      case CampaignActionState.Pledged:
+        return `Pledged ${amount} HDZ to this Campaign`;
+      case CampaignActionState.Cancel:
+        return `Cancel this Campaign`;
+      case CampaignActionState.Refund:
+        return `Refund 20 HDZ to this Campaign`;
+      case CampaignActionState.Claimed:
+        return `Claim this Campaign`;
+      default:
+        return "";
+    }
+  }, [actionState, amount]);
   return (
     <React.Fragment>
       <Dialog
@@ -35,19 +51,10 @@ export default function ConfirmModal({
         maxWidth="xs"
         style={{ zIndex: 900 }}
       >
-        <DialogTitle id="alert-dialog-title">
-          {actionState === CampaignActionState.UnPledged
-            ? "UnPledge"
-            : "Pledge"}{" "}
-          {amount} HDZ to Campaign
-        </DialogTitle>
+        <DialogTitle id="alert-dialog-title">{title}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            Are you sure you want to{" "}
-            {actionState === CampaignActionState.UnPledged
-              ? "UnPledge"
-              : "Pledge"}{" "}
-            this campaign?
+            Are you sure you want to submit?
           </DialogContentText>
         </DialogContent>
         <DialogActions>

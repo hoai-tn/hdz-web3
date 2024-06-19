@@ -24,20 +24,9 @@ const CrowdFunding = () => {
     const provider = new JsonRpcProvider(getRPC());
     const contract = new CrowdFundingContract(provider);
     let getAllCampaigns: ICampaign[] = await contract.getAllCampaign();
-    getAllCampaigns = getAllCampaigns.map((campaign: ICampaign, id: number) => {
-      return {
-        id: id + 1,
-        creator: campaign.creator,
-        title: campaign.title,
-        goal: contract._toNumber(campaign.goal),
-        pledged: contract._toNumber(campaign.pledged),
-        image: campaign.image,
-        startAt: formatTimestampToDate(Number(campaign.startAt)),
-        endAt: formatTimestampToDate(Number(campaign.endAt)),
-        description: campaign.description,
-        claimed: campaign.claimed,
-        state: handleCampaignState(campaign),
-      };
+    console.log({ getAllCampaigns });
+    getAllCampaigns = getAllCampaigns.map((campaign: ICampaign) => {
+      return campaign
     });
     setCampaigns(getAllCampaigns);
   }, []);

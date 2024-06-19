@@ -27,7 +27,6 @@ const PledgeForm = ({ actionState }: { actionState: CampaignActionState }) => {
   const allowUnpledged =
     pledgedAmount > 0 && amount > 0 && amount <= pledgedAmount;
 
-
   const handleConfirm = async () => {
     try {
       if (!walletProvider || !address) {
@@ -151,7 +150,9 @@ const PledgeForm = ({ actionState }: { actionState: CampaignActionState }) => {
           fullWidth
           onClick={() => setOpenConfirmModal(true)}
           disabled={
-            actionState === CampaignActionState.UnPledged && !allowUnpledged
+            (actionState === CampaignActionState.UnPledged &&
+              !allowUnpledged) ||
+            amount === 0
           }
         >
           {actionState === CampaignActionState.Pledged ? "Pledge" : "Unpledged"}

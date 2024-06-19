@@ -28,6 +28,7 @@ export enum CampaignState {
 }
 
 export enum CampaignActionState {
+  None,
   Pledged,
   UnPledged,
   Refund,

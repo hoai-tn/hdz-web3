@@ -4,6 +4,7 @@ import { BaseInterface } from "./interfaces";
 import { ProviderType } from "./interfaces/BaseInterface";
 import { getCrowdFundingAbi } from "./utils/getAbis";
 import { getCrowdFundingAddress } from "./utils/getAddress";
+import { formatTimestampToDate, handleCampaignState } from "../utils";
 
 export default class CrowdFundingContract extends BaseInterface {
   constructor(provider: ProviderType) {
@@ -36,7 +37,19 @@ export default class CrowdFundingContract extends BaseInterface {
   async getCampaign(id: number) {
     try {
       const campaign = await this._contract.campaigns(id);
-      return campaign;
+      return {
+        id,
+        creator: campaign.creator,
+        title: campaign.title,
+        goal: this._toNumber(campaign.goal),
+        pledged: this._toNumber(campaign.pledged),
+        image: campaign.image,
+        startAt: formatTimestampToDate(Number(campaign.startAt)),
+        endAt: formatTimestampToDate(Number(campaign.endAt)),
+        description: campaign.description,
+        claimed: campaign.claimed,
+        state: handleCampaignState(campaign),
+      };
     } catch (error) {
       throw error;
     }
@@ -47,7 +60,8 @@ export default class CrowdFundingContract extends BaseInterface {
       const numberOfCampaign = await this._contract.count();
       const campaigns = [];
       for (let id = 1; id <= numberOfCampaign; id++) {
-        campaigns.push(await this.getCampaign(id));
+        const campaign = await this.getCampaign(id);
+        if (campaign.goal && campaign.title) campaigns.push(campaign);
       }
       return campaigns;
     } catch (error) {

@@ -23,8 +23,8 @@ const CreatorTab = () => {
     return (
       campaignState !== CampaignState.Ended ||
       campaign.creator !== user.address ||
-      campaign.pledged == campaign.goal ||
-      !campaign.claimed
+      campaign.pledged < campaign.goal ||
+      campaign.claimed
     );
   }, [campaign, campaignState]);
 
@@ -34,9 +34,12 @@ const CreatorTab = () => {
       campaign.creator !== user.address
     );
   }, [campaign, campaignState]);
+
   const handleConfirm = () => {
     if (actionStateCreator === CampaignActionState.Cancel) {
       handleCancel();
+    } else {
+      handleClaim();
     }
   };
 
@@ -50,11 +53,24 @@ const CreatorTab = () => {
       await contract.cancel(campaign.id);
       dispatch(setCampaign({}));
       setIsLoading(false);
-
     }
   };
-  const handleClickCancel = () => {
-    setActionStateCreator(CampaignActionState.Cancel);
+
+  const handleClaim = async () => {
+    if (user.walletProvider) {
+      setIsLoading(true);
+      const provider = await new BrowserProvider(
+        user.walletProvider
+      ).getSigner();
+      const contract = new CrowdFundingContract(provider);
+      await contract.claim(campaign.id);
+      dispatch(setCampaign({ ...campaign, claimed: true }));
+      setIsLoading(false);
+    }
+  };
+
+  const handleClick = (actionState: CampaignActionState) => {
+    setActionStateCreator(actionState);
     setIsOpenConfirmModal(true);
   };
   return (
@@ -65,7 +81,12 @@ const CreatorTab = () => {
         followCursor
         sx={{ mr: 4 }}
       >
-        <Button color="success" variant="contained" disabled={isDisableClaim}>
+        <Button
+          color="success"
+          variant="contained"
+          disabled={isDisableClaim}
+          onClick={() => handleClick(CampaignActionState.Claimed)}
+        >
           Claim
         </Button>
       </Tooltip>
@@ -78,7 +99,7 @@ const CreatorTab = () => {
           color="error"
           variant="contained"
           disabled={isDisableCancel}
-          onClick={handleClickCancel}
+          onClick={() => handleClick(CampaignActionState.Cancel)}
         >
           Cancel
         </Button>

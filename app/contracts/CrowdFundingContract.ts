@@ -100,13 +100,9 @@ export default class CrowdFundingContract extends BaseInterface {
       throw error;
     }
   }
-  async claim(campaign: number, amount: number) {
+  async claim(campaign: number) {
     try {
-      const tx = await this._contract.unPledge(
-        campaign,
-        parseUnits(amount.toString(), 18),
-        this._option
-      );
+      const tx = await this._contract.claim(campaign, this._option);
       return this._handleTransactionResponse(tx);
     } catch (error) {
       throw error;
@@ -121,13 +117,9 @@ export default class CrowdFundingContract extends BaseInterface {
     }
   }
 
-  async refund(campaign: number, amount: number) {
+  async refund(campaign: number) {
     try {
-      const tx = await this._contract.unPledge(
-        campaign,
-        parseUnits(amount.toString(), 18),
-        this._option
-      );
+      const tx = await this._contract.refund(campaign, this._option);
       return this._handleTransactionResponse(tx);
     } catch (error) {
       throw error;

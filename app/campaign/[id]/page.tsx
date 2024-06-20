@@ -4,7 +4,12 @@ import PledgedTabs from "@/app/components/Campaign/PledgedTabs";
 import CrowdFundingContract from "@/app/contracts/CrowdFundingContract";
 import { getRPC } from "@/app/contracts/utils/common";
 import { CampaignState, ICampaign } from "@/app/types/crowdFunding";
-import { formatTimestampToDate, handleCampaignState } from "@/app/utils";
+import {
+  formatTimestampToDate,
+  handleCampaignState,
+  handleShowCampaignDayState,
+  handleShowCampaignStateLabel,
+} from "@/app/utils";
 import { setCampaign, setCampaignState } from "@/lib/features/campaignSlice";
 import { setUser } from "@/lib/features/userSlice";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
@@ -38,7 +43,7 @@ export default function Page({ params }: { params: { id: number } }) {
         const _campaign: ICampaign = await contract.getCampaign(params.id);
 
         dispatch(setCampaign({ ..._campaign }));
-        
+
         setIsLoading(false);
       } catch (error) {
         console.log(error);
@@ -72,27 +77,11 @@ export default function Page({ params }: { params: { id: number } }) {
   }, [campaign]);
 
   const daysLabel = useMemo(() => {
-    switch (campaignState) {
-      case CampaignState.NotStart:
-        return "Days Start";
-      case CampaignState.Started:
-        return "Days Left";
-      case CampaignState.Ended:
-        return "Days Ended";
-    }
-    return "None";
+    return handleShowCampaignStateLabel(campaign);
   }, [campaign]);
 
   const valueDaysLabel = useMemo(() => {
-    if (campaign)
-      switch (campaignState) {
-        case CampaignState.NotStart:
-          return moment(campaign.startAt).format("MM-DD-YYYY");
-        case CampaignState.Started:
-          return moment(campaign.endAt).diff(moment(), "days") + 1;
-        case CampaignState.Ended:
-          return moment(campaign.endAt).format("MM-DD-YYYY");
-      }
+    if (campaign) return handleShowCampaignDayState(campaign);
     return 0;
   }, [campaign]);
   return (
@@ -166,7 +155,11 @@ export default function Page({ params }: { params: { id: number } }) {
                 px={3}
                 py={2}
               >
-                <PledgedTabs />
+                {campaign.claimed ? (
+                  " This campaign has already been claimed by the creator."
+                ) : (
+                  <PledgedTabs />
+                )}
               </Grid>
             </Grid>
           </Box>

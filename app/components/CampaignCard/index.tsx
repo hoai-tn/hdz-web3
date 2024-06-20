@@ -5,17 +5,32 @@ import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import { showShortDescription, showSortAddress } from "@/app/utils";
+import {
+  handleCampaignState,
+  handleShowCampaignDayState,
+  handleShowCampaignStateCard,
+  handleShowCampaignStateLabel,
+  showShortDescription,
+  showSortAddress,
+} from "@/app/utils";
 import { Box } from "@mui/material";
 import Link from "next/link";
-import { ICampaign } from "@/app/types/crowdFunding";
+import { CampaignState, ICampaign } from "@/app/types/crowdFunding";
 
 const index = ({ campaign }: { campaign: ICampaign }) => {
-  const text = `Lizards are a widespread group of squamate reptiles, with over 6,000
-    species, ranging across all continents except Antarctica`;
+  const colorCampaignState = React.useMemo(() => {
+    switch (handleCampaignState(campaign)) {
+      case CampaignState.Ended:
+        return "red";
+      case CampaignState.Started:
+        return "green";
+      default:
+        return "Yellow";
+    }
+  }, [campaign]);
   return (
     <Link href={`/campaign/${campaign.id}`}>
-      <Card sx={{ height: 400 }}>
+      <Card sx={{ height: 390 }}>
         <CardMedia
           sx={{ height: 142 }}
           image={campaign.image}
@@ -29,32 +44,33 @@ const index = ({ campaign }: { campaign: ICampaign }) => {
             {showShortDescription(campaign.description, 3)}
           </Typography>
           <Box display="flex" justifyContent="space-between" marginTop={2}>
-            <Box>
-              <Typography>{campaign.pledged} CTC</Typography>
               <Typography variant="body2" color="text.secondary">
                 Raised of {campaign.goal} CTC
               </Typography>
-            </Box>
-            <Box>
-              <Typography>20</Typography>
-              <Typography variant="body2" color="text.secondary">
-                Day left
-              </Typography>
-            </Box>
+              <Typography>{campaign.pledged} CTC</Typography>
+          </Box>
+          <Box display="flex" justifyContent="space-between" marginTop={2}>
+            <Typography variant="body2" color="text.secondary">
+              {handleShowCampaignStateLabel(campaign)}
+            </Typography>
+            <Typography>{handleShowCampaignDayState(campaign)}</Typography>
           </Box>
           <Box display="flex" justifyContent="space-between" marginTop={2}>
             <Box display="flex" gap={1} alignItems="center">
-              <Box bgcolor="red" width={10} height={10} borderRadius={50}></Box>
-              <Typography>Start</Typography>
+              <Box
+                bgcolor={colorCampaignState}
+                width={10}
+                height={10}
+                borderRadius={50}
+              ></Box>
+              <Typography>{handleShowCampaignStateCard(campaign)}</Typography>
             </Box>
             <Typography variant="body2">
               By {showSortAddress(campaign.creator)}
             </Typography>
           </Box>
         </CardContent>
-        <CardActions>
-          <Button>Pledge To Campaign</Button>
-        </CardActions>
+
       </Card>
     </Link>
   );

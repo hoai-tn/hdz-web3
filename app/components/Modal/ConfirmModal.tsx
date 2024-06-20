@@ -9,6 +9,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import LoadingButton from "@mui/lab/LoadingButton";
 import SaveIcon from "@mui/icons-material/Save";
 import { CampaignActionState } from "@/app/types/crowdFunding";
+import { useAppSelector } from "@/lib/hooks";
 
 interface IConfirmModal {
   open: boolean;
@@ -27,6 +28,7 @@ export default function ConfirmModal({
   amount,
   actionState,
 }: IConfirmModal) {
+  const { pledgedAmount } = useAppSelector((state) => state.userSlice);
   const title = React.useMemo(() => {
     switch (actionState) {
       case CampaignActionState.UnPledged:
@@ -36,7 +38,7 @@ export default function ConfirmModal({
       case CampaignActionState.Cancel:
         return `Cancel this Campaign`;
       case CampaignActionState.Refund:
-        return `Refund 20 HDZ to this Campaign`;
+        return `Refund ${pledgedAmount} HDZ from this Campaign to your wallet`;
       case CampaignActionState.Claimed:
         return `Claim this Campaign`;
       default:

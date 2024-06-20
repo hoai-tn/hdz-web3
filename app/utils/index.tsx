@@ -36,7 +36,6 @@ export const formatTimestampToDate = (timestamp: number): Date => {
   return moment.unix(timestamp).toDate();
 };
 
-
 export const handleCampaignState = (campaign: ICampaign) => {
   if (
     moment() >= moment(campaign.startAt) &&
@@ -47,5 +46,37 @@ export const handleCampaignState = (campaign: ICampaign) => {
     return CampaignState.Ended;
   } else {
     return CampaignState.NotStart;
+  }
+};
+
+export const handleShowCampaignDayState = (campaign: ICampaign) => {
+  switch (handleCampaignState(campaign)) {
+    case CampaignState.NotStart:
+      return moment(campaign.startAt).format("MM-DD-YYYY");
+    case CampaignState.Started:
+      return moment(campaign.endAt).diff(moment(), "days") + 1;
+    case CampaignState.Ended:
+      return moment(campaign.endAt).format("MM-DD-YYYY");
+  }
+};
+export const handleShowCampaignStateCard = (campaign: ICampaign) => {
+  switch (handleCampaignState(campaign)) {
+    case CampaignState.NotStart:
+      return "Not Start";
+    case CampaignState.Started:
+      return "Started";
+    case CampaignState.Ended:
+      return "Ended";
+  }
+};
+
+export const handleShowCampaignStateLabel = (campaign: ICampaign) => {
+  switch (handleCampaignState(campaign)) {
+    case CampaignState.NotStart:
+      return "Days Start";
+    case CampaignState.Started:
+      return "Days Left";
+    case CampaignState.Ended:
+      return "Days Ended";
   }
 };

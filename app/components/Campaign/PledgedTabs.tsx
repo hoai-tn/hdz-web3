@@ -11,6 +11,7 @@ import {
 } from "@/app/types/crowdFunding";
 import { Button } from "@mui/material";
 import CreatorTab from "./CreatorTab";
+import RefundTab from "./RefundTab";
 
 export default function PledgedTabs() {
   const [value, setValue] = React.useState(CampaignTabState.Pledged);
@@ -40,10 +41,10 @@ export default function PledgedTabs() {
           <PledgeForm actionState={CampaignActionState.UnPledged} />
         </TabPanel>
         <TabPanel value={CampaignTabState.Refund}>
-          <Button>Refund</Button>
+          <RefundTab />
         </TabPanel>
         <TabPanel value={CampaignTabState.Creator}>
-          <CreatorTab/>
+          <CreatorTab />
         </TabPanel>
       </TabContext>
     </Box>

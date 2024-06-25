@@ -1,16 +1,14 @@
 import { CampaignActionState, CampaignState } from "@/app/types/crowdFunding";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { Box, Button, Tooltip } from "@mui/material";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import ConfirmModal from "../Modal/ConfirmModal";
 import { BrowserProvider } from "ethers";
 import CrowdFundingContract from "@/app/contracts/CrowdFundingContract";
 import { setCampaign } from "@/lib/features/campaignSlice";
 
 const CreatorTab = () => {
-  const { campaign, campaignState } = useAppSelector(
-    (state) => state.campaignSlice
-  );
+  const { campaign } = useAppSelector((state) => state.campaignSlice);
   const user = useAppSelector((state) => state.userSlice);
   const dispatch = useAppDispatch();
 
@@ -19,21 +17,26 @@ const CreatorTab = () => {
     CampaignActionState.None
   );
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (!isOpenConfirmModal) setIsLoading(false);
+  }, [isOpenConfirmModal]);
+
   const isDisableClaim = useMemo(() => {
     return (
-      campaignState !== CampaignState.Ended ||
+      campaign.state !== CampaignState.Ended ||
       campaign.creator !== user.address ||
       campaign.pledged < campaign.goal ||
       campaign.claimed
     );
-  }, [campaign, campaignState]);
+  }, [campaign]);
 
   const isDisableCancel = useMemo(() => {
     return (
-      campaignState !== CampaignState.NotStart ||
+      campaign.state !== CampaignState.NotStart ||
       campaign.creator !== user.address
     );
-  }, [campaign, campaignState]);
+  }, [campaign]);
 
   const handleConfirm = () => {
     if (actionStateCreator === CampaignActionState.Cancel) {

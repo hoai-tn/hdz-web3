@@ -1,6 +1,7 @@
 "use client";
 import PledgeForm from "@/app/components/Campaign/PledgeForm";
 import PledgedTabs from "@/app/components/Campaign/PledgedTabs";
+import { useLoadingContext } from "@/app/context/LoadingContent";
 import CrowdFundingContract from "@/app/contracts/CrowdFundingContract";
 import { getRPC } from "@/app/contracts/utils/common";
 import { CampaignState, ICampaign } from "@/app/types/crowdFunding";
@@ -10,7 +11,7 @@ import {
   handleShowCampaignDayState,
   handleShowCampaignStateLabel,
 } from "@/app/utils";
-import { setCampaign, setCampaignState } from "@/lib/features/campaignSlice";
+import { setCampaign } from "@/lib/features/campaignSlice";
 import { setUser } from "@/lib/features/userSlice";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { Box, Container, Grid, Typography } from "@mui/material";
@@ -23,20 +24,18 @@ import moment from "moment";
 import { useEffect, useMemo, useState } from "react";
 
 export default function Page({ params }: { params: { id: number } }) {
-  const [isLoading, setIsLoading] = useState(true);
-
+  const { loading, setLoading } = useLoadingContext();
   const { walletProvider } = useWeb3ModalProvider();
   const { address } = useWeb3ModalAccount();
 
   const dispatch = useAppDispatch();
-  const { campaign, campaignState } = useAppSelector(
-    (state) => state.campaignSlice
-  );
+  const { campaign } = useAppSelector((state) => state.campaignSlice);
   const user = useAppSelector((state) => state.userSlice);
 
   useEffect(() => {
     const getCampaign = async () => {
       try {
+        setLoading(true);
         const provider = new JsonRpcProvider(getRPC());
         const contract = new CrowdFundingContract(provider);
 
@@ -44,7 +43,7 @@ export default function Page({ params }: { params: { id: number } }) {
 
         dispatch(setCampaign({ ..._campaign }));
 
-        setIsLoading(false);
+        setLoading(false);
       } catch (error) {
         console.log(error);
       }
@@ -70,14 +69,8 @@ export default function Page({ params }: { params: { id: number } }) {
     getPledgeAmount();
   }, [walletProvider, address]);
 
-  useEffect(() => {
-    if (campaign) {
-      dispatch(setCampaignState(handleCampaignState(campaign)));
-    }
-  }, [campaign]);
-
   const daysLabel = useMemo(() => {
-    return handleShowCampaignStateLabel(campaign);
+    return handleShowCampaignStateLabel(campaign.state);
   }, [campaign]);
 
   const valueDaysLabel = useMemo(() => {
@@ -86,7 +79,7 @@ export default function Page({ params }: { params: { id: number } }) {
   }, [campaign]);
   return (
     <Container maxWidth="lg" sx={{ mt: 15, mb: 4 }}>
-      {!isLoading ? (
+      {!loading ? (
         campaign?.goal ? (
           <Box>
             <div className="cover-image-container">

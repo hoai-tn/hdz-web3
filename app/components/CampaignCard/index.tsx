@@ -3,10 +3,8 @@ import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
-import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import {
-  handleCampaignState,
   handleShowCampaignDayState,
   handleShowCampaignStateCard,
   handleShowCampaignStateLabel,
@@ -19,7 +17,7 @@ import { CampaignState, ICampaign } from "@/app/types/crowdFunding";
 
 const index = ({ campaign }: { campaign: ICampaign }) => {
   const colorCampaignState = React.useMemo(() => {
-    switch (handleCampaignState(campaign)) {
+    switch (campaign.state) {
       case CampaignState.Ended:
         return "red";
       case CampaignState.Started:
@@ -44,14 +42,14 @@ const index = ({ campaign }: { campaign: ICampaign }) => {
             {showShortDescription(campaign.description, 3)}
           </Typography>
           <Box display="flex" justifyContent="space-between" marginTop={2}>
-              <Typography variant="body2" color="text.secondary">
-                Raised of {campaign.goal} CTC
-              </Typography>
-              <Typography>{campaign.pledged} CTC</Typography>
+            <Typography variant="body2" color="text.secondary">
+              Raised of {campaign.goal} CTC
+            </Typography>
+            <Typography>{campaign.pledged} CTC</Typography>
           </Box>
           <Box display="flex" justifyContent="space-between" marginTop={2}>
             <Typography variant="body2" color="text.secondary">
-              {handleShowCampaignStateLabel(campaign)}
+              {handleShowCampaignStateLabel(campaign.state)}
             </Typography>
             <Typography>{handleShowCampaignDayState(campaign)}</Typography>
           </Box>
@@ -63,14 +61,15 @@ const index = ({ campaign }: { campaign: ICampaign }) => {
                 height={10}
                 borderRadius={50}
               ></Box>
-              <Typography>{handleShowCampaignStateCard(campaign)}</Typography>
+              <Typography>
+                {handleShowCampaignStateCard(campaign.state)}
+              </Typography>
             </Box>
             <Typography variant="body2">
               By {showSortAddress(campaign.creator)}
             </Typography>
           </Box>
         </CardContent>
-
       </Card>
     </Link>
   );

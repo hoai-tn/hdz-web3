@@ -4,7 +4,6 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 
 interface ICampaignState {
   campaign: ICampaign;
-  campaignState: CampaignState;
 }
 const initialState = {
   campaign: {
@@ -18,8 +17,8 @@ const initialState = {
     endAt: new Date(),
     description: "",
     claimed: false,
+    state: CampaignState.None,
   },
-  campaignState: CampaignState.None,
 } satisfies ICampaignState as ICampaignState;
 
 const CampaignSlice = createSlice({
@@ -29,11 +28,8 @@ const CampaignSlice = createSlice({
     setCampaign(state, { payload }) {
       state.campaign = { ...payload };
     },
-    setCampaignState(state, { payload }) {
-      state.campaignState = payload;
-    },
   },
 });
 
-export const { setCampaign, setCampaignState } = CampaignSlice.actions;
+export const { setCampaign } = CampaignSlice.actions;
 export default CampaignSlice.reducer;

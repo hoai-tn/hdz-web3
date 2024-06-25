@@ -50,7 +50,7 @@ export const handleCampaignState = (campaign: ICampaign) => {
 };
 
 export const handleShowCampaignDayState = (campaign: ICampaign) => {
-  switch (handleCampaignState(campaign)) {
+  switch (campaign.state) {
     case CampaignState.NotStart:
       return moment(campaign.startAt).format("MM-DD-YYYY");
     case CampaignState.Started:
@@ -59,19 +59,19 @@ export const handleShowCampaignDayState = (campaign: ICampaign) => {
       return moment(campaign.endAt).format("MM-DD-YYYY");
   }
 };
-export const handleShowCampaignStateCard = (campaign: ICampaign) => {
-  switch (handleCampaignState(campaign)) {
+export const handleShowCampaignStateCard = (state: CampaignState) => {
+  switch (state) {
     case CampaignState.NotStart:
       return "Not Start";
     case CampaignState.Started:
-      return "Started";
+      return "Starting";
     case CampaignState.Ended:
       return "Ended";
   }
 };
 
-export const handleShowCampaignStateLabel = (campaign: ICampaign) => {
-  switch (handleCampaignState(campaign)) {
+export const handleShowCampaignStateLabel = (state: CampaignState) => {
+  switch (state) {
     case CampaignState.NotStart:
       return "Days Start";
     case CampaignState.Started:

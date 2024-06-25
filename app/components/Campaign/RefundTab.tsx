@@ -9,7 +9,7 @@ import { setCampaign } from "@/lib/features/campaignSlice";
 import { setUser } from "@/lib/features/userSlice";
 
 const RefundTab = () => {
-  const { campaign, campaignState } = useAppSelector(
+  const { campaign } = useAppSelector(
     (state) => state.campaignSlice
   );
   const user = useAppSelector((state) => state.userSlice);
@@ -21,11 +21,11 @@ const RefundTab = () => {
 
   const isAllowRefund = useMemo(() => {
     return (
-      campaignState == CampaignState.Ended &&
+      campaign.state == CampaignState.Ended &&
       user.pledgedAmount > 0 &&
       campaign.goal > campaign.pledged
     );
-  }, [campaign, campaignState, user]);
+  }, [campaign, user]);
 
   const handleConfirm = async () => {
     if (user.walletProvider) {

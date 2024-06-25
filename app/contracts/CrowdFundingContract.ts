@@ -1,5 +1,9 @@
 import { parseUnits } from "ethers";
-import { ICampaign, ICreateCampaign } from "../types/crowdFunding";
+import {
+  CampaignState,
+  ICampaign,
+  ICreateCampaign,
+} from "../types/crowdFunding";
 import { BaseInterface } from "./interfaces";
 import { ProviderType } from "./interfaces/BaseInterface";
 import { getCrowdFundingAbi } from "./utils/getAbis";
@@ -34,10 +38,10 @@ export default class CrowdFundingContract extends BaseInterface {
     }
   }
 
-  async getCampaign(id: number) {
+  async getCampaign(id: number): Promise<ICampaign> {
     try {
       const campaign = await this._contract.campaigns(id);
-      return {
+      const formatCampaign = {
         id,
         creator: campaign.creator,
         title: campaign.title,
@@ -48,8 +52,11 @@ export default class CrowdFundingContract extends BaseInterface {
         endAt: formatTimestampToDate(Number(campaign.endAt)),
         description: campaign.description,
         claimed: campaign.claimed,
-        state: handleCampaignState(campaign),
+        state: CampaignState.None,
       };
+      formatCampaign.state = handleCampaignState(formatCampaign);
+      
+      return formatCampaign;
     } catch (error) {
       throw error;
     }

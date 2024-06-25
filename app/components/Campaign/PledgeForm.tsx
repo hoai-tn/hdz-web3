@@ -1,5 +1,5 @@
 import { Box, Button, Snackbar, TextField, Typography } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ConfirmModal from "../Modal/ConfirmModal";
 import { BrowserProvider } from "ethers";
 import CrowdFundingContract from "@/app/contracts/CrowdFundingContract";
@@ -23,6 +23,10 @@ const PledgeForm = ({ actionState }: { actionState: CampaignActionState }) => {
   const dispatch = useAppDispatch();
 
   const { open: openConnectWallet } = useWeb3Modal();
+
+  useEffect(() => {
+    if (!openConfirmModal) setIsSendingPledged(false);
+  }, [openConfirmModal]);
 
   const allowUnpledged =
     pledgedAmount > 0 && amount > 0 && amount <= pledgedAmount;

@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import { Slackey } from "next/font/google";
 import Navbar from "./components/Navbar";
-import Providers from "./Providers";
+import ThemeProviders from "./Providers";
 import Footer from "./components/Footer";
 import { Web3Modal } from "./context/web3modal";
 import "./globals.css";
 import StoreProvider from "./StoreProvider";
+import { LoadingProvider } from "./context/LoadingContent";
+import Loader from "@/app/components/Loader";
 
 const inter = Slackey({ weight: "400", subsets: ["latin"] });
 
@@ -23,15 +25,17 @@ export default function RootLayout({
     <html lang="en" style={{ scrollBehavior: "smooth" }}>
       <body className={inter.className} suppressHydrationWarning={true}>
         <StoreProvider>
-          <Providers>
+          <ThemeProviders>
             <Web3Modal>
-              <div>
-                <Navbar />
-                <div className="min-h-[18rem]">{children}</div>
-              </div>
-              <Footer />
+              <LoadingProvider>
+                <div>
+                  <Navbar />
+                  <div className="min-h-[18rem]">{children}</div>
+                </div>
+                <Footer />
+              </LoadingProvider>
             </Web3Modal>
-          </Providers>
+          </ThemeProviders>
         </StoreProvider>
       </body>
     </html>

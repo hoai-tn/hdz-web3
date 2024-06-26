@@ -1,9 +1,9 @@
-import React from 'react'
-
+import { Box } from "@mui/material";
+import React from "react";
+import Loader from "@/app/components/Loader";
 const Loading = () => {
-  return (
-    <div>Loading...</div>
-  )
-}
+  // return <Loader />;
+  return "";
+};
 
-export default Loading
+export default Loading;

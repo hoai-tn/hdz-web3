@@ -3,22 +3,10 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
 interface ICampaignState {
-  campaign: ICampaign;
+  campaign: ICampaign | null;
 }
 const initialState = {
-  campaign: {
-    id: 0,
-    creator: "",
-    pledged: 0,
-    title: "",
-    goal: 0,
-    image: "",
-    startAt: new Date(),
-    endAt: new Date(),
-    description: "",
-    claimed: false,
-    state: CampaignState.None,
-  },
+  campaign: null,
 } satisfies ICampaignState as ICampaignState;
 
 const CampaignSlice = createSlice({

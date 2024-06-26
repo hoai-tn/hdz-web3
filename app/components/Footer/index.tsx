@@ -11,7 +11,7 @@ const Footer = () => {
         backgroundImage: `url(/img/footer-bg.png)`,
         backgroundRepeat: "no-repeat",
         backgroundSize: "cover",
-        height: 500,
+        height: 620,
         marginTop: 50,
       }}
     >

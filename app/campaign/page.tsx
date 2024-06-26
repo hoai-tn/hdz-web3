@@ -10,14 +10,22 @@ import { useWeb3Modal, useWeb3ModalProvider } from "@web3modal/ethers/react";
 import { ICampaign, ICreateCampaign } from "../types/crowdFunding";
 import { getRPC } from "../contracts/utils/common";
 import { formatTimestampToDate, handleCampaignState } from "../utils";
+import { useLoadingContext } from "../context/LoadingContent";
 const CrowdFunding = () => {
   const { walletProvider } = useWeb3ModalProvider();
   const { open: openConnectWallet } = useWeb3Modal();
 
   const [open, setOpen] = useState(false);
-  const [campaigns, setCampaigns] = useState<ICampaign[]>([]);
+  const [campaigns, setCampaigns] = useState<ICampaign[] | null>(null);
+  
+  const { setLoading } = useLoadingContext();
   useEffect(() => {
-    getCampaigns();
+    const fetchCampaigns = async () => {
+      setLoading(true);
+      await getCampaigns();
+      setLoading(false);
+    };
+    fetchCampaigns();
   }, []);
 
   const getCampaigns = useCallback(async () => {
@@ -60,7 +68,7 @@ const CrowdFunding = () => {
           alignItems="center"
           sx={{ my: 2 }}
         >
-          <Typography>All Campaigns ({campaigns.length})</Typography>
+          <Typography>All Campaigns ({campaigns?.length})</Typography>
           <Button variant="contained" color="primary" onClick={handleClickOpen}>
             Create Campaign
           </Button>

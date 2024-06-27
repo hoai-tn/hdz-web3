@@ -15,8 +15,8 @@ import { Box } from "@mui/material";
 import Link from "next/link";
 import { CampaignState, ICampaign } from "@/app/types/crowdFunding";
 
-const index = ({ campaign }: { campaign: ICampaign }) => {
-  const colorCampaignState = React.useMemo(() => {
+const Index = ({ campaign }: { campaign: ICampaign }) => {
+  const ColorCampaignState = React.useMemo(() => {
     switch (campaign.state) {
       case CampaignState.Ended:
         return "red";
@@ -56,7 +56,7 @@ const index = ({ campaign }: { campaign: ICampaign }) => {
           <Box display="flex" justifyContent="space-between" marginTop={2}>
             <Box display="flex" gap={1} alignItems="center">
               <Box
-                bgcolor={colorCampaignState}
+                bgcolor={ColorCampaignState}
                 width={10}
                 height={10}
                 borderRadius={50}
@@ -75,4 +75,4 @@ const index = ({ campaign }: { campaign: ICampaign }) => {
   );
 };
 
-export default index;
+export default Index;

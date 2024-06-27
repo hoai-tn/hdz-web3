@@ -37,6 +37,7 @@ const PledgeForm = ({ actionState }: { actionState: CampaignActionState }) => {
         openConnectWallet();
         return;
       }
+      if (!campaign) return;
       setIsSendingPledged(true);
       const provider = await new BrowserProvider(walletProvider).getSigner();
       const hdzContract = new HDZContract(provider);

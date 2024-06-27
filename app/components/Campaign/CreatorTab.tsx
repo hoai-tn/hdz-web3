@@ -23,19 +23,21 @@ const CreatorTab = () => {
   }, [isOpenConfirmModal]);
 
   const isDisableClaim = useMemo(() => {
-    return (
-      campaign.state !== CampaignState.Ended ||
-      campaign.creator !== user.address ||
-      campaign.pledged < campaign.goal ||
-      campaign.claimed
-    );
+    if (campaign)
+      return (
+        campaign.state !== CampaignState.Ended ||
+        campaign.creator !== user.address ||
+        campaign.pledged < campaign.goal ||
+        campaign.claimed
+      );
   }, [campaign]);
 
   const isDisableCancel = useMemo(() => {
-    return (
-      campaign.state !== CampaignState.NotStart ||
-      campaign.creator !== user.address
-    );
+    if (campaign)
+      return (
+        campaign.state !== CampaignState.NotStart ||
+        campaign.creator !== user.address
+      );
   }, [campaign]);
 
   const handleConfirm = () => {
@@ -47,7 +49,7 @@ const CreatorTab = () => {
   };
 
   const handleCancel = async () => {
-    if (user.walletProvider) {
+    if (user.walletProvider && campaign) {
       setIsLoading(true);
       const provider = await new BrowserProvider(
         user.walletProvider
@@ -60,7 +62,7 @@ const CreatorTab = () => {
   };
 
   const handleClaim = async () => {
-    if (user.walletProvider) {
+    if (user.walletProvider && campaign) {
       setIsLoading(true);
       const provider = await new BrowserProvider(
         user.walletProvider

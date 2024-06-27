@@ -9,9 +9,7 @@ import { setCampaign } from "@/lib/features/campaignSlice";
 import { setUser } from "@/lib/features/userSlice";
 
 const RefundTab = () => {
-  const { campaign } = useAppSelector(
-    (state) => state.campaignSlice
-  );
+  const { campaign } = useAppSelector((state) => state.campaignSlice);
   const user = useAppSelector((state) => state.userSlice);
   const dispatch = useAppDispatch();
 
@@ -20,15 +18,16 @@ const RefundTab = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const isAllowRefund = useMemo(() => {
-    return (
-      campaign.state == CampaignState.Ended &&
-      user.pledgedAmount > 0 &&
-      campaign.goal > campaign.pledged
-    );
+    if (campaign)
+      return (
+        campaign.state == CampaignState.Ended &&
+        user.pledgedAmount > 0 &&
+        campaign.goal > campaign.pledged
+      );
   }, [campaign, user]);
 
   const handleConfirm = async () => {
-    if (user.walletProvider) {
+    if (user.walletProvider && campaign) {
       setIsLoading(true);
       const provider = await new BrowserProvider(
         user.walletProvider

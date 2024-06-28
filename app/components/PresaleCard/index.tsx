@@ -18,12 +18,17 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import React, { ChangeEvent, Suspense, useEffect, useState } from "react";
+import React, {
+  ChangeEvent,
+  Suspense,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 import LinearProgress, {
   linearProgressClasses,
 } from "@mui/material/LinearProgress";
 import { AccountCircle } from "@mui/icons-material";
-import HDZContract from "@/app/contracts/HDZContract";
 import {
   useWeb3ModalAccount,
   useWeb3ModalProvider,
@@ -40,12 +45,18 @@ import { getHDZAbi } from "@/app/contracts/utils/getAbis";
 import { checkAmount, formatNumber, showTransactionHash } from "@/app/utils";
 import PresaleTime from "./PresaleTime";
 import { getCrowdSaleAddress } from "@/app/contracts/utils/getAddress";
-import { PUBLIC_CHAIN_ID, RPC_TESTNET, getRPC } from "@/app/contracts/utils/common";
+import {
+  PUBLIC_CHAIN_ID,
+  RPC_TESTNET,
+  getRPC,
+} from "@/app/contracts/utils/common";
 import CrowdsaleContract from "@/app/contracts/CrowdsaleContract";
 import CrowdsaleProgressBar from "./CrowdsaleProgressBar";
 import Image from "next/image";
 import USDTContract from "@/app/contracts/USDTContract";
 import Link from "next/link";
+import CTCContract from "@/app/contracts/CTCContract";
+
 const PresaleCard = () => {
   const [buyMethod, setBuyMethod] = useState<String>("ETH");
   const { walletProvider } = useWeb3ModalProvider();
@@ -68,22 +79,22 @@ const PresaleCard = () => {
 
   const crowdsaleTokenAmount = 1000000000;
 
-  useEffect(() => {
-    getTokenBalance();
-  });
-  const getTokenBalance = async () => {
+  const getTokenBalance = useCallback(async () => {
+    console.log(`fetch token balance ${address}`);
+console.log(getCrowdSaleAddress());
+
     const provider = await new JsonRpcProvider(getRPC());
-    const hdzContract = new HDZContract(provider);
-    const crowdSaleBalance = await hdzContract.balanceOf(getCrowdSaleAddress());
+    const ctcContract = new CTCContract(provider);
+    const crowdSaleBalance = await ctcContract.balanceOf(getCrowdSaleAddress());
     setCrowdBalance(crowdSaleBalance);
 
     // get balanceOfWallet token
     if (walletProvider && address) {
       const provider = await new BrowserProvider(walletProvider);
-      const hdzContract = new HDZContract(provider);
+      const ctcContract = new CTCContract(provider);
       const usdtContract = new USDTContract(provider);
 
-      const balance = await hdzContract.balanceOf(address);
+      const balance = await ctcContract.balanceOf(address);
       const usdtBalanceOfWallet = await usdtContract.balanceOf(address);
       const ethers = await provider.getBalance(address);
 
@@ -95,27 +106,38 @@ const PresaleCard = () => {
       setUsdtBalanceOfWallet(0);
       setEthBalanceOfWallet(0);
     }
-  };
+  }, [walletProvider, address]);
+
   useEffect(() => {
-    const getCrowdsaleInfo = async () => {
-      try {
-        //get balance of crowsale contract
-        const provider = await new JsonRpcProvider(RPC_TESTNET);
+    // Set up an interval to fetch data every 3 seconds
+    const intervalId = setInterval(() => {
+      getTokenBalance();
+      getCrowdsaleInfo();
+    }, 3000);
 
-        const crowdsaleContract = new CrowdsaleContract(provider);
+    // Cleanup the interval on component unmount
+    return () => clearInterval(intervalId);
+  }, [address, walletProvider, getTokenBalance]);
 
-        const usdtRate = await crowdsaleContract.getUsdtRate();
-        const ethRate = await crowdsaleContract.getEthRate();
+  const getCrowdsaleInfo = useCallback(async () => {
+    try {
+      console.log("fetch presale info");
 
-        setEthRate(ethRate);
-        setUsdtRate(usdtRate);
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    getCrowdsaleInfo();
+      //get balance of crowsale contract
+      const provider = await new JsonRpcProvider(RPC_TESTNET);
+
+      const crowdsaleContract = new CrowdsaleContract(provider);
+
+      const usdtRate = await crowdsaleContract.getUsdtRate();
+      const ethRate = await crowdsaleContract.getEthRate();
+
+      setEthRate(ethRate);
+      setUsdtRate(usdtRate);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
   }, []);
 
   const handleChangeAmountBuy = (e: ChangeEvent<HTMLInputElement>) => {

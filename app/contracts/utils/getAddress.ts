@@ -10,5 +10,5 @@ export const getUsdtAddress = () => getAddress(SMART_ADDRESS.USDT);
 export const getNFTAddress = () => getAddress(SMART_ADDRESS.NFT);
 export const getMarketAddress = () => getAddress(SMART_ADDRESS.MARKET);
 export const getAuctionAddress = () => getAddress(SMART_ADDRESS.AUCTION);
-export const getHdzAddress = () => getAddress(SMART_ADDRESS.HDZ);
+export const getCTCAddress = () => getAddress(SMART_ADDRESS.CTC);
 export const getCrowdFundingAddress = () => getAddress(SMART_ADDRESS.CROWD_FUNDING);

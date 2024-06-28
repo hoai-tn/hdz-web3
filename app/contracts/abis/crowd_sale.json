@@ -1,21 +1,9 @@
 [
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "initOwner",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "eth_rate",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "usdt_rate",
-        "type": "uint256"
-      },
+      { "internalType": "address", "name": "initOwner", "type": "address" },
+      { "internalType": "uint256", "name": "eth_rate", "type": "uint256" },
+      { "internalType": "uint256", "name": "usdt_rate", "type": "uint256" },
       {
         "internalType": "address payable",
         "name": "wallet",
@@ -32,60 +20,36 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "target",
-        "type": "address"
-      }
+      { "internalType": "address", "name": "target", "type": "address" }
     ],
     "name": "AddressEmptyCode",
     "type": "error"
   },
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "account",
-        "type": "address"
-      }
+      { "internalType": "address", "name": "account", "type": "address" }
     ],
     "name": "AddressInsufficientBalance",
     "type": "error"
   },
-  {
-    "inputs": [],
-    "name": "FailedInnerCall",
-    "type": "error"
-  },
+  { "inputs": [], "name": "FailedInnerCall", "type": "error" },
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "owner",
-        "type": "address"
-      }
+      { "internalType": "address", "name": "owner", "type": "address" }
     ],
     "name": "OwnableInvalidOwner",
     "type": "error"
   },
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "account",
-        "type": "address"
-      }
+      { "internalType": "address", "name": "account", "type": "address" }
     ],
     "name": "OwnableUnauthorizedAccount",
     "type": "error"
   },
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "token",
-        "type": "address"
-      }
+      { "internalType": "address", "name": "token", "type": "address" }
     ],
     "name": "SafeERC20FailedOperation",
     "type": "error"
@@ -189,26 +153,14 @@
   {
     "inputs": [],
     "name": "ETH_rate",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [],
     "name": "USDT_rate",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
   },
@@ -216,11 +168,7 @@
     "inputs": [],
     "name": "_wallet",
     "outputs": [
-      {
-        "internalType": "address payable",
-        "name": "",
-        "type": "address"
-      }
+      { "internalType": "address payable", "name": "", "type": "address" }
     ],
     "stateMutability": "view",
     "type": "function"
@@ -234,11 +182,7 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "USDTAmount",
-        "type": "uint256"
-      }
+      { "internalType": "uint256", "name": "USDTAmount", "type": "uint256" }
     ],
     "name": "buyTokenByUSDT",
     "outputs": [],
@@ -247,52 +191,26 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_ethAmount",
-        "type": "uint256"
-      }
+      { "internalType": "uint256", "name": "_ethAmount", "type": "uint256" }
     ],
     "name": "getTokenAmountETH",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_usdtAmount",
-        "type": "uint256"
-      }
+      { "internalType": "uint256", "name": "_usdtAmount", "type": "uint256" }
     ],
     "name": "getTokenAmountUSDT",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [],
     "name": "owner",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
     "stateMutability": "view",
     "type": "function"
   },
@@ -305,11 +223,7 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "new_rate",
-        "type": "uint256"
-      }
+      { "internalType": "uint256", "name": "new_rate", "type": "uint256" }
     ],
     "name": "setETHRate",
     "outputs": [],
@@ -318,11 +232,7 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "new_rate",
-        "type": "uint256"
-      }
+      { "internalType": "uint256", "name": "new_rate", "type": "uint256" }
     ],
     "name": "setUSDTRate",
     "outputs": [],
@@ -331,11 +241,7 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "contract IERC20",
-        "name": "_token",
-        "type": "address"
-      }
+      { "internalType": "contract IERC20", "name": "_token", "type": "address" }
     ],
     "name": "setUSDTToken",
     "outputs": [],
@@ -346,22 +252,14 @@
     "inputs": [],
     "name": "token",
     "outputs": [
-      {
-        "internalType": "contract IERC20",
-        "name": "",
-        "type": "address"
-      }
+      { "internalType": "contract IERC20", "name": "", "type": "address" }
     ],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "newOwner",
-        "type": "address"
-      }
+      { "internalType": "address", "name": "newOwner", "type": "address" }
     ],
     "name": "transferOwnership",
     "outputs": [],
@@ -372,11 +270,7 @@
     "inputs": [],
     "name": "usdtToken",
     "outputs": [
-      {
-        "internalType": "contract IERC20",
-        "name": "",
-        "type": "address"
-      }
+      { "internalType": "contract IERC20", "name": "", "type": "address" }
     ],
     "stateMutability": "view",
     "type": "function"

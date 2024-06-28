@@ -32,11 +32,9 @@ import {
 import { showSortAddress } from "@/app/utils";
 
 const pages = [
+  { href: "campaign", name: "campaigns" },
   { href: "#about", name: "About" },
   { href: "#tokenomics", name: "Tokenomics" },
-  { href: "staking", name: "Staking" },
-  { href: "nft", name: "NFT" },
-  { href: "campaign", name: "CrowdFunding" },
   { href: "#FAQ", name: "FAQ" },
 ];
 

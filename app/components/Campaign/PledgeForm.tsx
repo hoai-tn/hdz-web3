@@ -4,7 +4,7 @@ import ConfirmModal from "../Modal/ConfirmModal";
 import { BrowserProvider } from "ethers";
 import CrowdFundingContract from "@/app/contracts/CrowdFundingContract";
 import { useWeb3Modal } from "@web3modal/ethers/react";
-import HDZContract from "@/app/contracts/HDZContract";
+import HDZContract from "@/app/contracts/CTCContract";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { setCampaign } from "@/lib/features/campaignSlice";
 import { CampaignActionState } from "@/app/types/crowdFunding";

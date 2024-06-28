@@ -1,3 +1,4 @@
+"use client";
 import { formatNumber } from "@/app/utils";
 import { Box, LinearProgress, Skeleton, Typography } from "@mui/material";
 import React from "react";
@@ -16,6 +17,9 @@ const CrowdsaleProgressBar = ({
   usdtRate,
 }: ICrowdsaleProgressBar) => {
   const remainToken = crowdsaleTokenAmount - crowdBalance;
+
+  const remainToken =
+    crowdBalance === 0 ? crowdBalance : crowdsaleTokenAmount - crowdBalance;
   return (
     <Box marginTop={2}>
       {isLoading ? (

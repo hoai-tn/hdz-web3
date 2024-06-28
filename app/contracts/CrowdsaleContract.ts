@@ -7,9 +7,7 @@ import { getCrowdSaleAddress } from "./utils/getAddress";
 import { ProviderType } from "./interfaces/BaseInterface";
 
 export default class CrowdsaleContract extends BaseInterface {
-  constructor(
-    provider: ProviderType
-  ) {
+  constructor(provider: ProviderType) {
     super(provider, getCrowdSaleAddress(), getCrowdSaleAbi());
   }
   async getUsdtRate(): Promise<number> {

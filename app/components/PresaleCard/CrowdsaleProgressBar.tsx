@@ -16,7 +16,6 @@ const CrowdsaleProgressBar = ({
   crowdBalance,
   usdtRate,
 }: ICrowdsaleProgressBar) => {
-  const remainToken = crowdsaleTokenAmount - crowdBalance;
 
   const remainToken =
     crowdBalance === 0 ? crowdBalance : crowdsaleTokenAmount - crowdBalance;

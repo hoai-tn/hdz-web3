@@ -16,9 +16,7 @@ const CrowdsaleProgressBar = ({
   crowdBalance,
   usdtRate,
 }: ICrowdsaleProgressBar) => {
-
-  const remainToken =
-    crowdBalance === 0 ? crowdBalance : crowdsaleTokenAmount - crowdBalance;
+  const remainToken = crowdsaleTokenAmount - crowdBalance;
   return (
     <Box marginTop={2}>
       {isLoading ? (

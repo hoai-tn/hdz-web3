@@ -8,12 +8,7 @@ import {
   DialogContentText,
   DialogTitle,
   Divider,
-  FormControl,
-  Input,
   InputAdornment,
-  InputLabel,
-  OutlinedInput,
-  Skeleton,
   Stack,
   TextField,
   Typography,
@@ -25,38 +20,32 @@ import React, {
   useEffect,
   useState,
 } from "react";
-import LinearProgress, {
-  linearProgressClasses,
-} from "@mui/material/LinearProgress";
-import { AccountCircle } from "@mui/icons-material";
+
 import {
   useWeb3ModalAccount,
   useWeb3ModalProvider,
 } from "@web3modal/ethers/react";
-import {
-  BrowserProvider,
-  ethers,
-  EtherscanProvider,
-  getDefaultProvider,
-  JsonRpcProvider,
-  parseEther,
-} from "ethers";
-import { getHDZAbi } from "@/app/contracts/utils/getAbis";
+import { BrowserProvider, JsonRpcProvider } from "ethers";
+
 import { checkAmount, formatNumber, showTransactionHash } from "@/app/utils";
 import PresaleTime from "./PresaleTime";
 import { getCrowdSaleAddress } from "@/app/contracts/utils/getAddress";
-import {
-  PUBLIC_CHAIN_ID,
-  RPC_TESTNET,
-  getRPC,
-} from "@/app/contracts/utils/common";
+import { RPC_TESTNET, getRPC } from "@/app/contracts/utils/common";
 import CrowdsaleContract from "@/app/contracts/CrowdsaleContract";
 import CrowdsaleProgressBar from "./CrowdsaleProgressBar";
 import Image from "next/image";
 import USDTContract from "@/app/contracts/USDTContract";
 import Link from "next/link";
 import CTCContract from "@/app/contracts/CTCContract";
+import Loader from "../Loader";
 
+import { IMaskInput } from "react-imask";
+import { NumericFormat, NumericFormatProps } from "react-number-format";
+
+interface CustomProps {
+  onChange: (event: { target: { name: string; value: string } }) => void;
+  name: string;
+}
 const PresaleCard = () => {
   const [buyMethod, setBuyMethod] = useState<String>("ETH");
   const { walletProvider } = useWeb3ModalProvider();
@@ -76,13 +65,23 @@ const PresaleCard = () => {
   const [amountTokenReceive, setAmountTokenReceive] = useState(0);
   const [hash, setHash] = useState("");
   const [open, setOpen] = React.useState(false);
+  const [isBuying, setIsBuying] = React.useState(false);
 
   const crowdsaleTokenAmount = 1000000000;
 
+  useEffect(() => {
+    // Set up an interval to fetch data every 3 seconds
+    const intervalId = setInterval(() => {
+      getTokenBalance();
+      getCrowdsaleInfo();
+    }, 5000);
+
+    // Cleanup the interval on component unmount
+    return () => clearInterval(intervalId);
+  }, [address, walletProvider]);
+
   const getTokenBalance = useCallback(async () => {
     console.log(`fetch token balance ${address}`);
-console.log(getCrowdSaleAddress());
-
     const provider = await new JsonRpcProvider(getRPC());
     const ctcContract = new CTCContract(provider);
     const crowdSaleBalance = await ctcContract.balanceOf(getCrowdSaleAddress());
@@ -108,17 +107,6 @@ console.log(getCrowdSaleAddress());
     }
   }, [walletProvider, address]);
 
-  useEffect(() => {
-    // Set up an interval to fetch data every 3 seconds
-    const intervalId = setInterval(() => {
-      getTokenBalance();
-      getCrowdsaleInfo();
-    }, 3000);
-
-    // Cleanup the interval on component unmount
-    return () => clearInterval(intervalId);
-  }, [address, walletProvider, getTokenBalance]);
-
   const getCrowdsaleInfo = useCallback(async () => {
     try {
       console.log("fetch presale info");
@@ -140,22 +128,25 @@ console.log(getCrowdSaleAddress());
     }
   }, []);
 
-  const handleChangeAmountBuy = (e: ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    let amountReceive = 0;
-    if (checkAmount(value)) {
-      if (!Number.isNaN(value)) {
-        amountReceive =
-          buyMethod == "ETH"
-            ? Number(value) * ethRate
-            : Number(value) * usdtRate;
-        setAmountTokenReceive(() => amountReceive);
+  const handleChangeAmountBuy = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      const value = e.target.value;
+      let amountReceive = 0;
+      if (checkAmount(value)) {
+        if (!Number.isNaN(value)) {
+          amountReceive =
+            buyMethod == "ETH"
+              ? Number(value) * ethRate
+              : Number(value) * usdtRate;
+          setAmountTokenReceive(() => amountReceive);
+        }
+        setAmountBuy(() => value);
+      } else {
+        setAmountBuy((prev: any) => prev);
       }
-      setAmountBuy(() => value);
-    } else {
-      setAmountBuy((prev: any) => prev);
-    }
-  };
+    },
+    []
+  );
 
   const handleChangeAmountReceive = (e: ChangeEvent<HTMLInputElement>) => {
     const value = Number(e.target.value);
@@ -177,39 +168,46 @@ console.log(getCrowdSaleAddress());
   };
 
   const handleBuyToken = async () => {
-    if (walletProvider && address) {
-      const provider = await new BrowserProvider(walletProvider).getSigner();
+    try {
+      if (walletProvider && address) {
+        setIsBuying(true);
+        const provider = await new BrowserProvider(walletProvider).getSigner();
 
-      const crowdsaleContract = new CrowdsaleContract(provider);
+        const crowdsaleContract = new CrowdsaleContract(provider);
 
-      if (buyMethod === "USDT") {
-        const usdtContract = new USDTContract(provider);
-        const allowanceAmount = await usdtContract.allowance(
-          address,
-          crowdsaleContract._contractAddress
-        );
-
-        if (allowanceAmount < amountBuy)
-          await usdtContract.approve(
-            crowdsaleContract._contractAddress,
-            amountBuy
+        if (buyMethod === "USDT") {
+          const usdtContract = new USDTContract(provider);
+          const allowanceAmount = await usdtContract.allowance(
+            address,
+            crowdsaleContract._contractAddress
           );
-        const getHash = await crowdsaleContract.buyTokenByUSDT(amountBuy);
 
-        if (getHash) {
-          setHash(getHash);
-          handleClickOpen();
-        }
-      } else if (buyMethod === "ETH") {
-        if (ethBalanceOfWallet > amountBuy) {
-          const getHash = await crowdsaleContract.buyTokenByETH(amountBuy);
+          if (allowanceAmount < amountBuy)
+            await usdtContract.approve(
+              crowdsaleContract._contractAddress,
+              amountBuy
+            );
+          const getHash = await crowdsaleContract.buyTokenByUSDT(amountBuy);
+
           if (getHash) {
             setHash(getHash);
             handleClickOpen();
           }
+        } else if (buyMethod === "ETH") {
+          if (ethBalanceOfWallet > amountBuy) {
+            const getHash = await crowdsaleContract.buyTokenByETH(amountBuy);
+            if (getHash) {
+              setHash(getHash);
+              handleClickOpen();
+            }
+          }
         }
+        await getTokenBalance();
       }
-      await getTokenBalance();
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsBuying(false);
     }
   };
 
@@ -220,6 +218,31 @@ console.log(getCrowdSaleAddress());
   const handleClose = () => {
     setOpen(false);
   };
+
+  const NumericFormatCustom = React.forwardRef<NumericFormatProps, CustomProps>(
+    function NumericFormatCustom(props, ref) {
+      const { onChange, ...other } = props;
+
+      return (
+        <NumericFormat
+          {...other}
+          getInputRef={ref}
+          onValueChange={(values) => {
+            onChange({
+              target: {
+                name: props.name,
+                value: values.value,
+              },
+            });
+          }}
+          thousandSeparator
+          valueIsNumericString
+          prefix="$"
+        />
+      );
+    }
+  );
+
   return (
     <Box
       sx={{
@@ -306,31 +329,32 @@ console.log(getCrowdSaleAddress());
               id="input-with-icon-textfield"
               value={amountBuy}
               onChange={handleChangeAmountBuy}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="start">
-                    {buyMethod == "ETH" ? (
-                      <Image
-                        src="/img/eth-logo.svg"
-                        width={25}
-                        height={15}
-                        alt="eth-icon"
-                        style={{ marginLeft: 5 }}
-                      />
-                    ) : (
-                      <Image
-                        src="/img/usdt-logo.svg"
-                        width={30}
-                        height={15}
-                        alt="eth-icon"
-                      />
-                    )}
-                  </InputAdornment>
-                ),
-                sx: {
-                  fontSize: 13,
-                },
-              }}
+              InputProps={{ inputComponent: NumericFormatCustom as any }}
+              // InputProps={{
+              //   endAdornment: (
+              //     <InputAdornment position="start">
+              //       {buyMethod == "ETH" ? (
+              //         <Image
+              //           src="/img/eth-logo.svg"
+              //           width={25}
+              //           height={15}
+              //           alt="eth-icon"
+              //           style={{ marginLeft: 5 }}
+              //         />
+              //       ) : (
+              //         <Image
+              //           src="/img/usdt-logo.svg"
+              //           width={30}
+              //           height={15}
+              //           alt="eth-icon"
+              //         />
+              //       )}
+              //     </InputAdornment>
+              //   ),
+              //   sx: {
+              //     fontSize: 13,
+              //   },
+              // }}
               variant="outlined"
             />
           </Box>
@@ -420,6 +444,7 @@ console.log(getCrowdSaleAddress());
           </Button>
         </DialogActions>
       </Dialog>
+      {isBuying && <Loader />}
     </Box>
   );
 };

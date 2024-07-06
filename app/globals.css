@@ -27,6 +27,10 @@ body {
 input {
   border: 1px solid #eda55c;
 }
+input:focus {
+  border: 2px solid #eda55c;
+  outline: none;
+}
 .text-area {
   border: 1px solid gray;
   padding: 4px;

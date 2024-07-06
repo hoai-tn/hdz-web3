@@ -39,8 +39,11 @@ import Link from "next/link";
 import CTCContract from "@/app/contracts/CTCContract";
 import Loader from "../Loader";
 
-import { IMaskInput } from "react-imask";
-import { NumericFormat, NumericFormatProps } from "react-number-format";
+import {
+  NumberFormatValues,
+  NumericFormat,
+  NumericFormatProps,
+} from "react-number-format";
 
 interface CustomProps {
   onChange: (event: { target: { name: string; value: string } }) => void;
@@ -79,6 +82,10 @@ const PresaleCard = () => {
     // Cleanup the interval on component unmount
     return () => clearInterval(intervalId);
   }, [address, walletProvider]);
+  const [values, setValues] = React.useState({
+    textmask: "(100) 000-0000",
+    numberformat: "1320",
+  });
 
   const getTokenBalance = useCallback(async () => {
     console.log(`fetch token balance ${address}`);
@@ -128,32 +135,30 @@ const PresaleCard = () => {
     }
   }, []);
 
-  const handleChangeAmountBuy = useCallback(
-    (e: ChangeEvent<HTMLInputElement>) => {
-      const value = e.target.value;
-      let amountReceive = 0;
-      if (checkAmount(value)) {
-        if (!Number.isNaN(value)) {
-          amountReceive =
-            buyMethod == "ETH"
-              ? Number(value) * ethRate
-              : Number(value) * usdtRate;
-          setAmountTokenReceive(() => amountReceive);
-        }
-        setAmountBuy(() => value);
-      } else {
-        setAmountBuy((prev: any) => prev);
-      }
-    },
-    []
-  );
+  const handleChangeAmountBuy = useCallback((values: NumberFormatValues) => {
+    const { formattedValue, value, floatValue } = values;
 
-  const handleChangeAmountReceive = (e: ChangeEvent<HTMLInputElement>) => {
-    const value = Number(e.target.value);
+    let amountReceive = 0;
+    if (floatValue) {
+      amountReceive =
+        buyMethod == "ETH" ? floatValue * ethRate : floatValue * usdtRate;
+
+      setAmountTokenReceive(() => amountReceive);
+      setAmountBuy(() => floatValue);
+
+      console.log({ amountReceive, floatValue });
+    } else {
+      setAmountBuy((prev) => prev);
+    }
+  }, []);
+
+  const handleChangeAmountReceive = (values: NumberFormatValues) => {
+    const { floatValue } = values;
     let amountToBuy = 0;
-    if (!Number.isNaN(value)) {
-      amountToBuy = buyMethod == "ETH" ? value * ethRate : value * usdtRate;
-      setAmountTokenReceive(() => value);
+    if (floatValue) {
+      amountToBuy =
+        buyMethod == "ETH" ? floatValue * ethRate : floatValue * usdtRate;
+      setAmountTokenReceive(() => floatValue);
       setAmountBuy(() => amountToBuy);
     } else {
       setAmountTokenReceive((prev) => prev);
@@ -218,30 +223,6 @@ const PresaleCard = () => {
   const handleClose = () => {
     setOpen(false);
   };
-
-  const NumericFormatCustom = React.forwardRef<NumericFormatProps, CustomProps>(
-    function NumericFormatCustom(props, ref) {
-      const { onChange, ...other } = props;
-
-      return (
-        <NumericFormat
-          {...other}
-          getInputRef={ref}
-          onValueChange={(values) => {
-            onChange({
-              target: {
-                name: props.name,
-                value: values.value,
-              },
-            });
-          }}
-          thousandSeparator
-          valueIsNumericString
-          prefix="$"
-        />
-      );
-    }
-  );
 
   return (
     <Box
@@ -325,64 +306,80 @@ const PresaleCard = () => {
             <Typography align="left" fontSize={12}>
               Buy With {buyMethod}
             </Typography>
-            <TextField
-              id="input-with-icon-textfield"
-              value={amountBuy}
-              onChange={handleChangeAmountBuy}
-              InputProps={{ inputComponent: NumericFormatCustom as any }}
-              // InputProps={{
-              //   endAdornment: (
-              //     <InputAdornment position="start">
-              //       {buyMethod == "ETH" ? (
-              //         <Image
-              //           src="/img/eth-logo.svg"
-              //           width={25}
-              //           height={15}
-              //           alt="eth-icon"
-              //           style={{ marginLeft: 5 }}
-              //         />
-              //       ) : (
-              //         <Image
-              //           src="/img/usdt-logo.svg"
-              //           width={30}
-              //           height={15}
-              //           alt="eth-icon"
-              //         />
-              //       )}
-              //     </InputAdornment>
-              //   ),
-              //   sx: {
-              //     fontSize: 13,
-              //   },
-              // }}
-              variant="outlined"
-            />
+            <Box
+              display="flex"
+              alignItems="center"
+              sx={{
+                border: "1px solid #eda55c",
+                borderRadius: 1,
+                px: 2,
+                py: 1,
+                height: 50,
+              }}
+            >
+              <NumericFormat
+                value={amountBuy}
+                onValueChange={handleChangeAmountBuy}
+                thousandSeparator=","
+                style={{
+                  outline: 0,
+                  border: 0,
+                  background: "transparent",
+                  width: "100%",
+                  fontSize: 13,
+                }}
+              />
+              {buyMethod == "ETH" ? (
+                <Image
+                  src="/img/eth-logo.svg"
+                  width={15}
+                  height={15}
+                  alt="eth-icon"
+                />
+              ) : (
+                <Image
+                  src="/img/usdt-logo.svg"
+                  width={20}
+                  height={25}
+                  alt="eth-icon"
+                />
+              )}
+            </Box>
           </Box>
           <Box>
             <Typography align="left" fontSize={12}>
-              Max Receive CTC
+              Max Receive CTC {amountTokenReceive}
             </Typography>
-            <TextField
-              id="input-with-icon-textfield"
-              value={amountTokenReceive}
-              onChange={handleChangeAmountReceive}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="start">
-                    <Image
-                      src="/img/ctc-logo.svg"
-                      width={25}
-                      height={20}
-                      alt="ctc-icon"
-                    />
-                  </InputAdornment>
-                ),
-                sx: {
-                  fontSize: 13,
-                },
+            <Box
+              display="flex"
+              alignItems="center"
+              sx={{
+                border: "1px solid #eda55c",
+                borderRadius: 1,
+                px: 2,
+                py: 1,
+                height: 50,
               }}
-              variant="outlined"
-            />
+            >
+              <NumericFormat
+                value={amountTokenReceive}
+                onValueChange={handleChangeAmountReceive}
+                thousandSeparator=","
+                style={{
+                  outline: 0,
+                  border: 0,
+                  background: "transparent",
+                  width: "100%",
+                  fontSize: 13,
+                }}
+              />
+              <Image
+                src="/img/ctc-logo.svg"
+                width={25}
+                height={20}
+                alt="ctc-icon"
+              />
+            </Box>
           </Box>
         </Box>
         {isLoading

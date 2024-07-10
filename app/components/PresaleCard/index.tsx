@@ -66,6 +66,12 @@ const PresaleCard = () => {
 
   const [amountBuy, setAmountBuy] = useState<any>(0);
   const [amountTokenReceive, setAmountTokenReceive] = useState(0);
+
+  const [inputValues, setInputValues] = useState({
+    buy: 0,
+    receive: 0,
+  });
+
   const [hash, setHash] = useState("");
   const [open, setOpen] = React.useState(false);
   const [isBuying, setIsBuying] = React.useState(false);
@@ -82,10 +88,6 @@ const PresaleCard = () => {
     // Cleanup the interval on component unmount
     return () => clearInterval(intervalId);
   }, [address, walletProvider]);
-  const [values, setValues] = React.useState({
-    textmask: "(100) 000-0000",
-    numberformat: "1320",
-  });
 
   const getTokenBalance = useCallback(async () => {
     console.log(`fetch token balance ${address}`);
@@ -117,17 +119,16 @@ const PresaleCard = () => {
   const getCrowdsaleInfo = useCallback(async () => {
     try {
       console.log("fetch presale info");
-
       //get balance of crowsale contract
       const provider = await new JsonRpcProvider(RPC_TESTNET);
 
       const crowdsaleContract = new CrowdsaleContract(provider);
 
-      const usdtRate = await crowdsaleContract.getUsdtRate();
-      const ethRate = await crowdsaleContract.getEthRate();
+      const getUsdtRate = await crowdsaleContract.getUsdtRate();
+      const getEthRate = await crowdsaleContract.getEthRate();
 
-      setEthRate(ethRate);
-      setUsdtRate(usdtRate);
+      setEthRate(getEthRate);
+      setUsdtRate(getUsdtRate);
     } catch (error) {
       console.log(error);
     } finally {
@@ -135,35 +136,40 @@ const PresaleCard = () => {
     }
   }, []);
 
-  const handleChangeAmountBuy = useCallback((values: NumberFormatValues) => {
-    const { formattedValue, value, floatValue } = values;
+  const handleChangeAmountBuy = useCallback(
+    (values: NumberFormatValues) => {
+      const { floatValue } = values;
 
-    let amountReceive = 0;
-    if (floatValue) {
-      amountReceive =
-        buyMethod == "ETH" ? floatValue * ethRate : floatValue * usdtRate;
+      let amountReceive = 0;
+      if (floatValue) {
+        amountReceive =
+          buyMethod == "ETH" ? floatValue * ethRate : floatValue * usdtRate;
 
-      setAmountTokenReceive(() => amountReceive);
-      setAmountBuy(() => floatValue);
+        setAmountTokenReceive(() => amountReceive);
+        setAmountBuy(() => floatValue);
+      } else {
+        setAmountTokenReceive(0);
+      }
+    },
+    [ethRate, usdtRate, buyMethod]
+  );
 
-      console.log({ amountReceive, floatValue });
-    } else {
-      setAmountBuy((prev) => prev);
-    }
-  }, []);
+  const handleChangeAmountReceive = useCallback(
+    (values: NumberFormatValues) => {
+      const { floatValue } = values;
+      let amountToBuy = 0;
+      if (floatValue) {
+        amountToBuy =
+          buyMethod == "ETH" ? floatValue / ethRate : floatValue / usdtRate; // Điều chỉnh công thức tính toán ở đây
 
-  const handleChangeAmountReceive = (values: NumberFormatValues) => {
-    const { floatValue } = values;
-    let amountToBuy = 0;
-    if (floatValue) {
-      amountToBuy =
-        buyMethod == "ETH" ? floatValue * ethRate : floatValue * usdtRate;
-      setAmountTokenReceive(() => floatValue);
-      setAmountBuy(() => amountToBuy);
-    } else {
-      setAmountTokenReceive((prev) => prev);
-    }
-  };
+        setAmountTokenReceive(() => floatValue);
+        setAmountBuy(() => amountToBuy);
+      } else {
+        setAmountBuy(() => 0);
+      }
+    },
+    [ethRate, usdtRate, buyMethod]
+  );
 
   const checkBalanceOfWallet = () => {
     if (buyMethod === "USDT")
@@ -321,6 +327,7 @@ const PresaleCard = () => {
                 value={amountBuy}
                 onValueChange={handleChangeAmountBuy}
                 thousandSeparator=","
+                decimalScale={5}
                 style={{
                   outline: 0,
                   border: 0,
@@ -348,7 +355,7 @@ const PresaleCard = () => {
           </Box>
           <Box>
             <Typography align="left" fontSize={12}>
-              Max Receive CTC {amountTokenReceive}
+              Max Receive CTC
             </Typography>
             <Box
               display="flex"
@@ -365,6 +372,7 @@ const PresaleCard = () => {
                 value={amountTokenReceive}
                 onValueChange={handleChangeAmountReceive}
                 thousandSeparator=","
+                decimalScale={5}
                 style={{
                   outline: 0,
                   border: 0,

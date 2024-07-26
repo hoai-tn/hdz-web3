@@ -114,7 +114,6 @@ function Navbar() {
           >
             <Link href="/">
               <AdbIcon sx={{ mr: 1 }} />
-              LOGO
             </Link>
           </Typography>
           <Box sx={{ display: { xs: "none", md: "flex" } }}>

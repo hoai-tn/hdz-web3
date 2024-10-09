@@ -10,7 +10,7 @@ const PresaleTime = ({ isLoading }: { isLoading: Boolean }) => {
   });
 
   useEffect(() => {
-    const targetDate: Date = new Date("2024-08-31T23:59:59");
+    const targetDate: Date = new Date("2024-12-31T23:59:59");
 
     const timer = setInterval(() => {
       const currentDate: Date = new Date();
